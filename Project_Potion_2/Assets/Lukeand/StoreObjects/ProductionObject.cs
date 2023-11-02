@@ -4,18 +4,9 @@ using UnityEngine;
 
 public class ProductionObject : StoreObject, IInteractable
 {
-    //this is more flexible. it takes anything that it is an ingredient.
-    //then it needs to check all possible fella to determine who it can produce.
+    
 
-    //the list is taken from where?
-
-    //as itens are added a list is made of all things that can be.
-
-    //it appears an ui by the side of all itens in hand.
-    //
-
-
-    //seecond interact is grabbing whats inside.
+    
 
 
     #region INTERACT

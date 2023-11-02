@@ -102,7 +102,16 @@ public class PlayerHandler : MonoBehaviour
     void CheckInteractButton()
     {
 
-        interactButton.Control(currentInteract != null || currentBuySpot != null);
+
+        if(currentInteract != null)
+        {
+            interactButton.Control(currentInteract.IsInteractable(inventory));
+        }
+        else
+        {
+            interactButton.Control(currentBuySpot != null);
+        }
+        
 
         if(currentInteract != null)
         {
@@ -112,6 +121,8 @@ public class PlayerHandler : MonoBehaviour
         {
             interactSecondButton.Control(false);
         }
+
+        
 
     }
 
@@ -126,7 +137,7 @@ public class PlayerHandler : MonoBehaviour
        
         if (hit.collider == null)
         {
-
+            if (currentInteract != null) currentInteract.UIInteract(inventory, false);
             currentInteract = null;
             return;
         }
@@ -135,18 +146,17 @@ public class PlayerHandler : MonoBehaviour
 
         if (interact == null)
         {
-
+            if(currentInteract != null) currentInteract.UIInteract(inventory, false);
             currentInteract = null;
             return;
         }
 
    
-        if (!interact.IsInteractable(inventory))
-        {
-            currentInteract = null;
-            return;
-        }
+       
+        
         currentInteract = interact;
+
+        currentInteract.UIInteract(inventory, true);
         interactButton.ChangeText(interact.GetInteractName(inventory));
         interactSecondButton.ChangeText(interact.GetInteractName(inventory, true));
     }
@@ -154,6 +164,7 @@ public class PlayerHandler : MonoBehaviour
     public void InputInteract()
     {
         if (currentInteract == null) return;
+        if (!currentInteract.IsInteractable(inventory)) return;
         currentInteract.Interact(inventory);
     }
     public void InputSecondInteract()

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CraftTestA
   m_EditorClassIdentifier: 
   potionResult:
-    data: {fileID: 0}
+    data: {fileID: 11400000, guid: 4824ac3a84e48bd43bd905a17a3a07ab, type: 2}
     quantity: 1
   ingredientList:
   - data: {fileID: 11400000, guid: 4376df159bac5a5409aa80861c5483d9, type: 2}

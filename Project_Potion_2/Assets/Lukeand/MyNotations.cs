@@ -114,3 +114,11 @@
 //planter.
 //fabricator.
 ///chest
+
+
+//TO FIX
+///usee the iinventory system to grab things but the problem is that it needsd to take into account the item coming or the player will be able to add more.
+///fix the button. it showing grab but when the player clicks the player givees insintead.
+///also the secondary option shouldnt appear when there is only one option on what to do.
+
+

@@ -39,7 +39,6 @@ public class Planter : StoreObject, IInteractable
 
         if(currentDiff <= 0)
         {
-            Debug.Log("this was called");
             isReadyForHarvest = true;
             planterUI.UpdateProgress(1, 1, true);
             return;
@@ -56,10 +55,20 @@ public class Planter : StoreObject, IInteractable
         //set up the plant.
         this.data = data;
         planterUI.UpdateUI(data);
+        StartTimer();
+        UpdateGraphics();
+    }
+
+    void StartTimer()
+    {
+        isReadyForHarvest = false;
         timeWhenComplete = DateTime.UtcNow.AddSeconds(data.timeForHarvest.GetTotal());
         totalDiff = (timeWhenComplete - DateTime.UtcNow).Seconds;
     }
-
+    void UpdateGraphics()
+    {
+        //decided between two differnt assets or grown or growing.
+    }
 
     #region INTERACTABLE
     public string GetInteractName(PlayerInventory inventory, bool isSecond = false)
@@ -69,12 +78,12 @@ public class Planter : StoreObject, IInteractable
 
     public void Interact(PlayerInventory inventory)
     {
-        
+        //create new timer for this fella.
+        Harvest();
     }
 
     public bool IsInteractable(PlayerInventory inventory)
     {
-        Debug.Log("planter is being callede");
         return isReadyForHarvest;
     }
 
@@ -96,5 +105,25 @@ public class Planter : StoreObject, IInteractable
     }
     #endregion
 
+    void Harvest()
+    {
+
+        bool success = PlayerHandler.instance.inventory.ICanReceive(new ItemClass(data, 1));
+        //this also gives the item to thee player.
+        
+
+        if (!success)
+        {
+            Debug.Log("couldnt get beecause of somee reason");
+            return;
+        }
+        Debug.Log("here");
+        GameHandler.instance.CreateFTEItem(new ItemClass(data, 1), transform, PlayerHandler.instance.transform, 10);
+        StartTimer();
+        UpdateGraphics();
+
+        
+
+    }
 
 }

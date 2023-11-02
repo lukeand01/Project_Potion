@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Reflection;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -31,8 +33,7 @@ public class ItemHolder : StoreObject, IInteractable, IInventory
     //
     public string GUID { get; private set; }
 
-
-
+    
 
     private void Awake()
     {
@@ -151,7 +152,7 @@ public class ItemHolder : StoreObject, IInteractable, IInventory
 
     bool HasSpace()
     {
-        return item.quantity < limitStorage;
+        return item.quantity + iinventoryComingList.Count < limitStorage;
     }
 
     //this is not htat goo but it will work for now.
@@ -202,7 +203,15 @@ public class ItemHolder : StoreObject, IInteractable, IInventory
     void OrderInventoryToSendItem(PlayerInventory inventory, int itemIndex)
     {
         //we send from the inventory to this fella.
-        inventory.SendHandToTarget(this, transform, itemIndex);
+        if (ICanReceive(item))
+        {
+            inventory.SendHandToTarget(transform, itemIndex);
+        }
+        else
+        {
+            Debug.Log("couldnt send it");
+        }
+        
     }
 
     
@@ -215,39 +224,55 @@ public class ItemHolder : StoreObject, IInteractable, IInventory
             Debug.Log("null");
             return;
         }
-        GameHandler.instance.CreateFTEItem(new ItemClass(item.data, 1), inventory, transform, npc.transform, 1f);
+        GameHandler.instance.CreateFTEItem(new ItemClass(item.data, 1), transform, npc.transform, 1f);
         DestroyUnit();
     }
-    void GiveItem(PlayerInventory inventory)
+    void GiveItemToInventory(PlayerInventory inventory)
     {
-        GameHandler.instance.CreateFTEItem(new ItemClass(item.data, 1), inventory.GetIInventory(), transform, inventory.transform, 5);
-        DestroyUnit();
+        if(inventory.ICanReceive(item))
+        {
+            GameHandler.instance.CreateFTEItem(new ItemClass(item.data, 1), transform, inventory.transform, 5);
+            DestroyUnit();
+        }
+        else
+        {
+        }
+        
     }
     #region INTERACT
     public string GetInteractName(PlayerInventory inventory, bool isSecond = false)
     {
-        if(isSecond && IsSecondInteractable(inventory))
+        bool give = PlayerCanGive(inventory);
+        bool take = PlayerCanTake(inventory);
+        bool both = give && take;
+
+        if (isSecond)
         {
-            return "Grab item";
-        }
-
-
-        if (HasItem())
-        {
-            if (!inventory.HasSpaceInHand()) return "No Space in hand";
-            if (inventory.GetSameItemInHand(item.data) > -1 && HasSpace())
-            {
-                //then we can interact because we can send an additional fella into it.
-                return "Place Item";
-            }
-
-            return "Grab item";
+            if (both) return "Grab Potion";
         }
         else
         {
-            return "Place item";
+            if (give)
+            {
+                return "Place Potion";
+            }
 
-        }     
+            if (take)
+            {
+                return "Take Potion";
+            }
+        }
+
+        if (both)
+        {
+            return "Grab Potion";
+        }
+
+        
+
+        return "";
+
+         
         
 
         
@@ -262,44 +287,65 @@ public class ItemHolder : StoreObject, IInteractable, IInventory
         }
         else
         {
-            if (HasItem())
-            {
-                int index = inventory.GetSameItemInHand(item.data);
+            //if its not an npc that we do thing differntly.
+            bool give = PlayerCanGive(inventory);
+            bool take = PlayerCanTake(inventory);
 
-                
-                if(index == -1)
+
+            if (give)
+            {
+                //give always first.
+                //
+                int index = 0;
+                if(item.data == null)
                 {
-                    //this means that we dont have more of the same itens. so we ejust grab it.
-                    GiveItem(inventory);
+                    index = inventory.GetNextEspecificItem(ItemType.Potion);
                 }
                 else
                 {
-                    //this means that we DO have more itens and so we should give them.
-                    OrderInventoryToSendItem(inventory, index);
+                    index = inventory.GetSameItemInHand(item.data);
                 }
-
-            }
-
-            if (!HasItem())
-            {
-                int itemIndex = inventory.GetNextEspecificItem(itemType);
-
-                if (itemIndex == -1)
+                
+                if(index == -1)
                 {
-                    Debug.LogError("PROBLEM");
-                    return;
+                    Debug.Log("something wrong");
                 }
 
-
-                OrderInventoryToSendItem(inventory, itemIndex);
+                OrderInventoryToSendItem(inventory, index);
+                return;
             }
-        
+
+            if (take)
+            {
+                //then take.
+                GiveItemToInventory(inventory);
+                return;
+            }
+      
         }
 
     }
 
     public bool IsInteractable(PlayerInventory inventory)
     {
+        bool give = PlayerCanGive(inventory);
+        bool take = PlayerCanTake(inventory);
+        bool both = give && take;
+
+        //
+
+        if (give)
+        {
+            return true;
+        }
+
+        if (take)
+        {
+            return true;
+        }
+
+        return false;
+
         if (HasItem())
         {
             if(inventory.GetSameItemInHand(item.data) > - 1 && HasSpace())
@@ -324,50 +370,81 @@ public class ItemHolder : StoreObject, IInteractable, IInventory
 
     public bool IsSecondInteractable(PlayerInventory inventory)
     {
+
+        bool both = PlayerCanGive(inventory) && PlayerCanTake(inventory);
+
+        return both;
+
         
-        if (HasItem() && inventory.HasSpaceInHand() && inventory.GetSameItemInHand(item.data) != -1)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     public void SecondInteract(PlayerInventory inventory)
     {
         //grab it.
-        GiveItem(inventory);
+        GiveItemToInventory(inventory);
     }
     public void UIInteract(PlayerInventory inventory, bool isClose = false)
     {
-        throw new NotImplementedException();
+        
     }
-
-    //you can only use the second button 
-
-    //bascially two differnt modes.
-    //when holder has item and when it does not have itens.
-
-    //does have items
-    //then we first check if we have the same the item in the list
-    //and if there is enough space in the holder.
-    //else
-    //have enough 
-
-
-
-    //does NOT have itens
-    //you can interact as loong as you have at least one item.
-
 
     #endregion
 
+    bool PlayerCanTake(PlayerInventory inventory)
+    {
+        //player can only take if there is something to take.
+        if (!HasItem()) return false;
+        if (!inventory.HasSpaceInHand()) return false;
+
+
+        return true;
+    }
+    bool PlayerCanGive(PlayerInventory inventory)
+    {
+        //to give the player must:
+        //have an item
+        //have the right item
+
+        //you can only place it if you have potion.
+        if (inventory.GetNextEspecificItem(ItemType.Potion) == -1) return false;
+
+
+        if (!HasItem())
+        {
+            return true;
+        }
+
+        //but if it has iteme thee player needs to have the same itme.
+        if(HasItem() && HasSpace() && inventory.GetSameItemInHand(item.data) != -1)
+        {
+            return true;
+        }
+
+
+        return false;
+    }
+
+
+
+
+
     #region IINVENTORY  
 
+    List<ItemClass> iinventoryComingList = new();
+    public bool ICanReceive(ItemClass item)
+    {
+
+        //in here we will make a list of things coming.
+        if (HasSpace())
+        {
+            iinventoryComingList.Add(item);
+            return true;
+        }
+        return false;
+    }
     public void IReceiveItem(ItemClass item)
     {
+        iinventoryComingList.RemoveAt(0);
         ReceiveItem(item);
     }
 

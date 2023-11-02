@@ -31,6 +31,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
     [SerializeField] int chestLimit;
     [SerializeField]List<ItemClass> chestList = new();
 
+    
 
     private void Start()
     {
@@ -43,7 +44,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
         }
     }
 
-
+    #region CHEST - HAND 
     public bool SendItemChestToHand(ItemClass item, Transform parent)
     {
         if (item.data == null) return false;
@@ -75,11 +76,9 @@ public class PlayerInventory : MonoBehaviour, IInventory
         //need to remove it from hand.
 
     }
-
+    #endregion
 
     #region CHEST
-
-
     public void OpenChest()
     {
         UIHolder.instance.chest.CreateHandUnits(handList);
@@ -229,31 +228,23 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     #endregion
 
-    #region HAND
+    #region HAND    
 
-
-    public void StartSendItemToHand()
-    {
-        //we start the thing for the item coming or going.
-
-
-
-    }
-
-    void AddItemToHand(ItemClass item)
+    bool AddItemToHand(ItemClass item)
     {
         //every thing has only 1 of quantity.
 
         if(!HasSpaceInHand())
         {
             Debug.Log("cannot carry anymore");
-            return;
+            return false;
         }
 
         ItemClass newItem = new(item.data, 1, handList.Count);
 
         handList.Add(newItem);
         CreateHandUnit(item);
+        return true;
     }
     
     void CreateHandUnit(ItemClass item)
@@ -274,7 +265,6 @@ public class PlayerInventory : MonoBehaviour, IInventory
         UpdateHand();
     }
 
-
     void UpdateHand()
     {
 
@@ -292,7 +282,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     public bool HasSpaceInHand()
     {
-        return handList.Count < handLimit;
+        return handList.Count + iinventoryComingList.Count < handLimit;
     }
 
     
@@ -307,10 +297,10 @@ public class PlayerInventory : MonoBehaviour, IInventory
     //
 
 
-    public void SendHandToTarget(IInventory inventory, Transform target, int index)
+    public void SendHandToTarget(Transform target, int index)
     {
-
-        GameHandler.instance.CreateFTEItem(handList[index], inventory, transform, target, Time.deltaTime * 50);
+        
+        GameHandler.instance.CreateFTEItem(handList[index], transform, target, Time.deltaTime * 50);
         RemoveHandUnit(index);
     }
 
@@ -334,8 +324,17 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     public int GetSameItemInHand(ItemData data)
     {
+
+        if(data == null)
+        {
+            return -1;
+        }
+
         for (int i = 0; i < handList.Count; i++)
         {
+
+            if (handList[i] == null) Debug.Log("this was null");
+
             if (handList[i].data.name == data.name)
             {
                 return i;
@@ -349,12 +348,31 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     //make effect for the item going from end to receiver.
     #region IINVENTORY
+    List<ItemClass> iinventoryComingList = new();
+
+    public bool ICanReceive(ItemClass item)
+    {
+        //if can receive 
+        if (HasSpaceInHand())
+        {
+            iinventoryComingList.Add(item);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+
+    }
     public IInventory GetIInventory()
     {
         return this;
     }
     public void IReceiveItem(ItemClass item)
     {
+        Debug.Log("receive item");
+        iinventoryComingList.RemoveAt(0);
         AddItemToHand(item);
     }
 
@@ -362,6 +380,8 @@ public class PlayerInventory : MonoBehaviour, IInventory
     {
         
     }
+
+    
 
     #endregion
 

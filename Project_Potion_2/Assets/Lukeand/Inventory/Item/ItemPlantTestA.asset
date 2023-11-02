@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Plant A
   itemDescription: This is a test plant
-  itemSprite: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: 98e36223d41719f4886df57f3836bed9, type: 3}
   stackLimit: 5
   itemType: 0
   timeForHarvest:

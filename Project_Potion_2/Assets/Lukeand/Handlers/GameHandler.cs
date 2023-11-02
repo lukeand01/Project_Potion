@@ -33,10 +33,10 @@ public class GameHandler : MonoBehaviour
 
     }
 
-    public void CreateFTEItem(ItemClass item, IInventory inventory, Transform original, Transform target, float speed)
+    public void CreateFTEItem(ItemClass item,Transform original, Transform target, float speed)
     {
         FollowTillEndItem newObject = Instantiate(fteItemTemplate, original.transform.position, Quaternion.identity);
-        newObject.SetUp(item, inventory, target, speed);
+        newObject.SetUp(item, target.gameObject, speed);
     }
 
     public void CreateFTEImage(ItemClass item, Transform original, Transform target, Transform parent, float speed)

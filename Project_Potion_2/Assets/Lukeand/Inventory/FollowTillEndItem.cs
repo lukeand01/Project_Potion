@@ -10,11 +10,12 @@ public class FollowTillEndItem : FollowTillEnd
     IInventory inventoryTarget;
     
 
-    public void SetUp(ItemClass item, IInventory inventoryTarget,Transform target, float speed)
+    public void SetUp(ItemClass item, GameObject target, float speed)
     {
-        SetUpBase(target, speed);
+        SetUpBase(target.transform, speed);
 
-        this.inventoryTarget = inventoryTarget;
+
+        inventoryTarget = target.GetComponent<IInventory>();
         this.item = new ItemClass(item.data, item.quantity,0);
 
         rend.sprite = item.data.itemSprite;
@@ -26,7 +27,7 @@ public class FollowTillEndItem : FollowTillEnd
     {
         //we also give the information to the fella.
 
-        inventoryTarget.IReceiveItem(item);
+       if(inventoryTarget != null) inventoryTarget.IReceiveItem(item);
         base.Act();
     }
 

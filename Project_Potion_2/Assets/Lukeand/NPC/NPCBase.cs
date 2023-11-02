@@ -479,6 +479,8 @@ public class NPCBase : Tree, IInteractable, IInventory
     //
 
     List<ItemClass> handItemList = new();
+
+
     void AddItemToHand(ItemClass item)
     {
         //from where i get the template?
@@ -516,10 +518,15 @@ public class NPCBase : Tree, IInteractable, IInventory
 
     public void IReceiveItemList()
     {
-        throw new System.NotImplementedException();
+        
     }
 
-    
+    public bool ICanReceive(ItemClass item)
+    {
+        return true;
+    }
+
+
 
     #endregion
 

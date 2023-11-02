@@ -120,7 +120,7 @@ public class StoreHandler : MonoBehaviour
         }
     }
     public void RemoveItemHolder(ItemHolder itemHolder, ItemDataPotion data)
-    {
+    {        
         if (dictionaryForItemHolderTypes.ContainsKey(data.potionType))
         {
             List<ItemHolder> holderList = dictionaryForItemHolderTypes[data.potionType];
@@ -129,7 +129,6 @@ public class StoreHandler : MonoBehaviour
             {
                 if (holderList[i].GUID == itemHolder.GUID)
                 {
-                    Debug.Log("found the one to remove");
                     holderList.RemoveAt(i);
                     break;
                 }
