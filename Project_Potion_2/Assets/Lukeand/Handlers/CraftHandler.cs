@@ -6,11 +6,50 @@ public class CraftHandler : MonoBehaviour
 {
     //here we will deal with logic.
 
-    public List<ItemDataIngredient> allIngredientList;
-    //we will create a dictonary from this at the start of everygame and leave stored to more easily use.
+    [SerializeField]List<ItemDataIngredient> allIngredientList = new();
+    [SerializeField]List<CraftData> allCraftList = new();
+    Dictionary<ItemDataIngredient, List<CraftData>> dictionaryCraftDividedByIngredient;
 
-    public bool CanThisItemBeUsedInRecipe()
+    private void Start()
     {
-        return false;
+        foreach (var item in allIngredientList)
+        {
+            dictionaryCraftDividedByIngredient.Add(item, AllCraftPossibleWithIngredient(item));
+        }
+
+        Debug.Log(dictionaryCraftDividedByIngredient.Count);
+    }
+
+    List<CraftData> AllCraftPossibleWithIngredient(ItemDataIngredient data)
+    {
+        List<CraftData> newList = new();
+        foreach (var item in allCraftList)
+        {
+            if (item.HasIngredient(data)) newList.Add(item);
+        }
+        Debug.Log("created a list " + newList.Count);
+        return newList;
+    }
+
+    public List<CraftData> GetListFromIngredient(ItemDataIngredient data)
+    {
+        if (!dictionaryCraftDividedByIngredient.ContainsKey(data)) return null;
+        return dictionaryCraftDividedByIngredient[data];
+    }
+    public List<CraftData> UpdateListFromIngredient(ItemDataIngredient data, List<CraftData> oldList)
+    {
+        List<CraftData> newList = new();
+
+        foreach (var item in oldList)
+        {
+            if (item.HasIngredient(data))
+            {
+                newList.Add(item);
+            }
+
+
+        }
+      
+        return newList;
     }
 }

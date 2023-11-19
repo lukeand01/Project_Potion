@@ -9,9 +9,18 @@ public class UIHolder : MonoBehaviour
     public PlayerGUI player;
     public ChampUI champ;
     public ChestUI chest;
+    public ProductionUI production;
+    public RaidUI raid;
+
     private void Awake()
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
     }
+
+    public void OnMove()
+    {
+        if (chest != null) chest.CloseUI();
+    }
+
 }

@@ -33,7 +33,7 @@ public class InputButton : ButtonBase
 
     private void Update()
     {
-        isHoldingImage.SetActive(isPressing);
+       if(isHoldingImage != null) isHoldingImage.SetActive(isPressing);
     }
     public void ChangeText(string name)
     {

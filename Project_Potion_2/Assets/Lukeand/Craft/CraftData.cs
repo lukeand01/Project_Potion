@@ -15,10 +15,22 @@ public class CraftData : ScriptableObject
     [Separator("INGREDIENTS")]
     public List<IngredientClass> ingredientList = new();
 
+    [Separator("TIME FOR COMPLETION")]
+    public TimeClass timeToComplete;
 
+    public bool HasIngredient(ItemDataIngredient data)
+    {
+        foreach (var item in ingredientList)
+        {
+            if (data == item.data) return true;
+        }
+        return false;
+    }
 
-
-
+    public ItemClass GetItemClass()
+    {
+        return new ItemClass(potionResult.data, potionResult.quantity);
+    }
 
 }
 
@@ -35,4 +47,6 @@ public class PotionClass
 {
     public ItemDataPotion data;
     public int quantity = 1;
+
+    
 }

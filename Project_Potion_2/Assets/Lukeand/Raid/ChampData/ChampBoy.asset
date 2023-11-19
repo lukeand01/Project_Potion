@@ -14,3 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   champName: Boy
   champSprite: {fileID: 21300000, guid: aec0dde1a19db7a42891b3d66e364b65, type: 3}
+  champModel: {fileID: 21300000, guid: 7750fc70c5e3fec47b59ceee22f6c926, type: 3}
+  autoAttack:
+    activeList: []
+  skill1:
+    activeList: []
+  skill2:
+    activeList: []
+  passiveMain:
+    passiveList: []
+  passiveSupport:
+    passiveList: []

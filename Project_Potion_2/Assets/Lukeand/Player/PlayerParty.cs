@@ -14,6 +14,12 @@ public class PlayerParty : MonoBehaviour
     private void Awake()
     {
         handler = GetComponent<PlayerHandler>();
+        
+    }
+
+    private void Start()
+    {
+        //here we assign thee saved data too.
         ChampUI champUI = UIHolder.instance.champ;
         foreach (var item in referenceChampList)
         {
@@ -21,13 +27,23 @@ public class PlayerParty : MonoBehaviour
             champUI.CreateUnitForChampClass(newChampClass);
             champList.Add(newChampClass);
         }
+
     }
 
-    private void Start()
+    public List<ChampClass> GetAvailableChampList()
     {
-        //here we assign thee saved data too.
+        List<ChampClass> newList = new();
 
+        foreach (var item in champList)
+        {
+            if(item.champCopies > 0)
+            {
+                newList.Add(item);
+            }
+        }
 
+        return newList;
     }
+
 
 }

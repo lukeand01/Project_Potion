@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     PlayerHandler handler;
+    Rigidbody2D rb;
     [SerializeField] float speed;
 
     [HideInInspector] public Vector3 lastDir;
@@ -14,10 +15,12 @@ public class PlayerMove : MonoBehaviour
     private void Awake()
     {
         handler = GetComponent<PlayerHandler>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     public void Move(Vector3 dir)
     {
+
         if (dir.x == 0 && dir.y == 0)
         {
 
@@ -25,14 +28,11 @@ public class PlayerMove : MonoBehaviour
         else
         {
             lastDir = dir;
-
-            //
-            UIHolder.instance.chest.CloseUI();
-
+            UIHolder.instance.OnMove();
         }
 
         currentDir = dir;
-        handler.rb.velocity = new Vector2(dir.x * speed, dir.y * speed);
+        rb.velocity = new Vector2(dir.x * speed, dir.y * speed);
     }
 
 

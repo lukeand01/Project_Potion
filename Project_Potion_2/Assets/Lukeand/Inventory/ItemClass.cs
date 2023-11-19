@@ -71,11 +71,12 @@ public class ItemClass
         this.quantity = item.quantity;
     }
 
-    #region HAND UNIT
+    #region UI UNIT
 
     void UpdateUI()
     {
         if (chestUnit != null) chestUnit.UpdateUI();
+        if (ingredientUnit != null) ingredientUnit.UpdateUI();
     }
 
     ItemHandUnit handUnit;
@@ -93,6 +94,13 @@ public class ItemClass
     {
         return chestUnit.transform;
     }
+
+    IngredientUnit ingredientUnit;
+    public void UpdateIngredientUnit(IngredientUnit ingredientUnit)
+    {
+        this.ingredientUnit = ingredientUnit;
+    }
+
 
     #endregion
 

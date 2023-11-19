@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class ChampUIUnit : ButtonBase
 {
+    ChampUI uiHandler;
     ChampClass champ;
     [SerializeField] Image portrait;
     [SerializeField] GameObject unlockedHolder;
@@ -16,6 +17,7 @@ public class ChampUIUnit : ButtonBase
 
     public void SetUp(ChampClass champ)
     {
+        uiHandler = UIHolder.instance.champ;
         this.champ = champ;
         UpdateUI();
     }
@@ -51,10 +53,6 @@ public class ChampUIUnit : ButtonBase
     public override void OnPointerClick(PointerEventData eventData)
     {
         base.OnPointerClick(eventData);
-        //when we click on this we check if we have the stuff.
-
-
-
-
+        uiHandler.SelectChamp(champ);
     }
 }

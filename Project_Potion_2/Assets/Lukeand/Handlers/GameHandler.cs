@@ -12,6 +12,12 @@ public class GameHandler : MonoBehaviour
     [HideInInspector] public NPCHandler npc;
     [HideInInspector] public CraftHandler craft;
 
+    [Separator("RAID REF")]
+    public List<RaidWorldData> raidWorldList = new();
+
+    [Separator("BD REF")]
+    public List<BDData> bdRefList = new();
+
     [Separator("TEMPLATES")]
     [SerializeField] ItemHandUnit itemHandTemplate;
     [SerializeField] FollowTillEndItem fteItemTemplate;
@@ -28,12 +34,17 @@ public class GameHandler : MonoBehaviour
         craft = GetComponent<CraftHandler>();
     }
 
+    private void Start()
+    {
+        UIHolder.instance.raid.SetUp(raidWorldList);
+    }
+
     public void CreateSFX(AudioClip clip)
     {
 
     }
 
-    public void CreateFTEItem(ItemClass item,Transform original, Transform target, float speed)
+    public void CreateFTEItem(ItemClass item, Transform original, Transform target, float speed)
     {
         FollowTillEndItem newObject = Instantiate(fteItemTemplate, original.transform.position, Quaternion.identity);
         newObject.SetUp(item, target.gameObject, speed);
@@ -56,6 +67,46 @@ public class GameHandler : MonoBehaviour
     public FadeUI CreateFadeUI()
     {
         return Instantiate(fadeUITemplate, new Vector3(0, 0, 0), Quaternion.identity);
+    }
+
+    public BDData GetBDRef(string id)
+    {
+        foreach (var item in bdRefList)
+        {
+            if (item.idName == id) return item;
+        }
+        return null;
+    }
+
+    List<ChampClass> champList;
+    RaidStageData stage;
+    public void StoreInformationForRaid(RaidStageData stage, List<ChampClass> champList)
+    {
+        this.stage = stage;
+        this.champList = champList;
+    }
+
+    public void SendInformationToRaid()
+    {
+        //we get these two and send to the
+        if (RaidHandler.instance == null)
+        {
+            Debug.Log("gamehandler didnt find raid");
+            return;
+        }
+        if (champList == null)
+        {
+            Debug.Log("gamehandler has no champlist");
+            return;
+        }
+        if (stage == null)
+        {
+            Debug.Log("gamehandler has no stage");
+            return;
+        }
+
+        RaidHandler.instance.StartNewRaid(stage, champList);
+
     }
 
 }

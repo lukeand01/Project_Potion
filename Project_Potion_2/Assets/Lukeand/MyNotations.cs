@@ -107,13 +107,14 @@
 //
 
 
-
-
 //THINGS I SHOULD DO BEFORE DEALING WITH THEE SERVER
-//champions list, champion progress and equip, and thee equip list. not the raiding that it is no necessary.
+//champions list, champion progress and equip, and thee equip list. 
 //planter.
 //fabricator.
 ///chest
+//combat
+//I AM DONE
+
 
 
 //TO FIX
@@ -122,3 +123,55 @@
 ///also the secondary option shouldnt appear when there is only one option on what to do.
 
 
+
+//CURRENT GOAL
+///open champ ui.
+///can seleect champ
+///can open raid.
+///can select a world
+///display for stages and selection have effects.
+//get especific info from current stage.
+///can select a team from your owned and unselected champs 
+///able to drag and drop the champions. or to click the champions.
+//can then confirm the current champs to then load the map.
+
+//NEXT GOAL
+//get production done.
+//it show all hand units. but show the difference between the ones you cannot use, the ones that cannot be used due to recipe and the ones that can 
+//
+
+
+//CURRENT GOAL - RAID
+//crating an ability system
+//create an auto attack that shoots a projectil
+//craete an abiity that shoots another projectil. 
+//have cooldown being registered.
+//create stats system.
+//create a passive that grants attackspeed to a cap after every unit killed.
+//create targetting system.
+
+
+//NEXT GOAL - RAID
+//get the stats working
+//get the abilities working
+//can equip champs in the champui.
+
+
+//CREATING ABILITIES
+//everytime you kill an enemy gain a buff that stacks to a limt and then decays.
+//shoot a small arrow.
+//shoot a big arrow that explodes.
+
+//TO FIX
+//the raid ui is not that good. slow for some reason fix that.
+
+
+
+
+
+
+
+//TOTAL GOAL 
+//3 months of development (16/11/23 - 16/2/23)
+//money goal: 3.000 dolar over a year. (low goal)
+//

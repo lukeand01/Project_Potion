@@ -12,6 +12,7 @@ public class PlayerHandler : MonoBehaviour
     [HideInInspector] public PlayerMove move;
     [HideInInspector] public PlayerInventory inventory;
     [HideInInspector] public PlayerResource resource;
+    [HideInInspector] public PlayerParty party;
 
     [Separator("COMPONENTS")]
     [HideInInspector] public GameObject body;
@@ -70,9 +71,16 @@ public class PlayerHandler : MonoBehaviour
         uiHolder.player.UpdateMoney(currentMoney, 0);
         interactButton.EventPressed += InputInteract;
         interactButton.EventReleased += InputRelease;
-
         interactSecondButton.EventPressed += InputSecondInteract;
     }
+
+    private void OnDestroy()
+    {
+        interactButton.EventPressed -= InputInteract;
+        interactButton.EventReleased -= InputRelease;
+        interactSecondButton.EventPressed -= InputSecondInteract;
+    }
+
 
     private void FixedUpdate()
     {
@@ -96,13 +104,12 @@ public class PlayerHandler : MonoBehaviour
         move = GetComponent<PlayerMove>();
         inventory = GetComponent<PlayerInventory>();
         resource = GetComponent<PlayerResource>();
+        party = GetComponent<PlayerParty>();
     }
     #endregion
 
     void CheckInteractButton()
     {
-
-
         if(currentInteract != null)
         {
             interactButton.Control(currentInteract.IsInteractable(inventory));
@@ -230,3 +237,5 @@ public class PlayerHandler : MonoBehaviour
 
 
 }
+
+//

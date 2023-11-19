@@ -31,6 +31,9 @@ public class PlayerInventory : MonoBehaviour, IInventory
     [SerializeField] int chestLimit;
     [SerializeField]List<ItemClass> chestList = new();
 
+    [Separator("RAID")]
+    int raidMoney;
+    List<ItemClass> raidList = new();
     
 
     private void Start()
@@ -55,7 +58,6 @@ public class PlayerInventory : MonoBehaviour, IInventory
         UIHolder.instance.chest.FTEForHand(item);
         AddItemToHand(item);
         item.DecreaseQuantity();
-        UIHolder.instance.chest.CreateHandUnits(handList);
         return true;
     }
     public bool SendItemHandToChest(ItemClass item, Transform parent)
@@ -88,6 +90,8 @@ public class PlayerInventory : MonoBehaviour, IInventory
     void StartChest()
     {
         ChestUI chestUI = UIHolder.instance.chest;
+
+        if (chestUI == null) return;
 
         for (int i = 0; i < chestLimit; i++)
         {
@@ -230,7 +234,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     #region HAND    
 
-    bool AddItemToHand(ItemClass item)
+    public bool AddItemToHand(ItemClass item)
     {
         //every thing has only 1 of quantity.
 
@@ -244,6 +248,10 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
         handList.Add(newItem);
         CreateHandUnit(item);
+
+        UIHolder.instance.chest.CreateHandUnits(handList);
+        UIHolder.instance.production.UpdateHandList(handList);
+
         return true;
     }
     
@@ -255,7 +263,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
         handUnitList.Add(newObject);
         UpdateHand();
     }
-    void RemoveHandUnit(int index)
+    public void RemoveHandUnit(int index)
     {
 
         handList.RemoveAt(index);
@@ -284,8 +292,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
     {
         return handList.Count + iinventoryComingList.Count < handLimit;
     }
-
-    
+   
     Vector2 GetPos(int index)
     {
         float y = (index * 0.15f) + 0.15f;
@@ -294,16 +301,17 @@ public class PlayerInventory : MonoBehaviour, IInventory
         return new Vector2(x, y);
     }
 
-    //
-
+    public ItemClass GetItemInHand(int index)
+    {
+        if (handList.Count <= index) return null;       
+        return handList[index];
+    }
 
     public void SendHandToTarget(Transform target, int index)
-    {
-        
+    {        
         GameHandler.instance.CreateFTEItem(handList[index], transform, target, Time.deltaTime * 50);
         RemoveHandUnit(index);
     }
-
 
     public int GetNextEspecificItem(ItemType type)
     {
@@ -343,6 +351,28 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
         return -1;
     }
+
+    //i want to get the first item in hand that belong to a craftrecipe.
+
+    #endregion
+
+    #region RAID
+
+    public void AddRaidMoney(int value)
+    {
+        raidMoney += value;
+    }
+    public void ReduceRaidMoney(int value)
+    {
+        raidMoney -= value;
+    }
+
+    public void AddRaidItem(ItemClass item)
+    {
+
+
+    }
+
 
     #endregion
 
@@ -386,3 +416,5 @@ public class PlayerInventory : MonoBehaviour, IInventory
     #endregion
 
 }
+
+//

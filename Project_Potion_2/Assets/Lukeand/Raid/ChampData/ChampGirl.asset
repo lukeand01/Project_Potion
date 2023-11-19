@@ -14,3 +14,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   champName: Girl
   champSprite: {fileID: 21300000, guid: 1949fb2fd44dead4ebd8da0f5db4e506, type: 3}
+  champModel: {fileID: 21300000, guid: 6a964007a3276914290a500d00b04763, type: 3}
+  autoAttack:
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
+    activeList: []
+  skill1:
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
+    activeList: []
+  skill2:
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
+    activeList: []
+  passiveMain:
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
+    passiveList: []
+  passiveSupport:
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
+    passiveList: []
