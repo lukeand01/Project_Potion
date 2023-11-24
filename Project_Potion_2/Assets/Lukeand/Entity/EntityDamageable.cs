@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class EntityDamageable : MonoBehaviour
@@ -10,10 +12,13 @@ public class EntityDamageable : MonoBehaviour
     public float initalHealth;
     public bool isDead;
     public bool isImmortal;
+    public bool shouldShowDamageUI;
     public string id { get; private set; }
 
     EntityHandler handler;
 
+    //anytime this is attackced it creates a text ui.
+    //
 
     private void Awake()
     {
@@ -24,22 +29,35 @@ public class EntityDamageable : MonoBehaviour
 
     public void TakeDamage(EntityHandler attacker, DamageClass damage)
     {
-        currentHealth -= damage.GetDamage();
+        float damageValue = damage.GetDamage();
+        currentHealth -= damageValue;
 
         //apply bd if there are any here.
-        damage.ApplyBDToStat(handler.ttStat);
+        if(handler.ttStat != null) damage.ApplyBDToStat(handler.ttStat);
 
-        if(currentHealth <= 0 && !damage.cannotFinishEntity)
-        {
-            attacker.ttEvents.OnKillEnemy(handler);
-            Die();
+        CreateDamagePopUp(damageValue);
+        
+        if (currentHealth <= 0 && !damage.cannotFinishEntity && !isImmortal)
+        {           
+            Die(attacker);
         }
 
     }
 
-    void Die()
+    void CreateDamagePopUp(float damage)
     {
+        if (handler.ttCanvas == null) return;
+        handler.ttCanvas.CreateDamageFadeUI(damage.ToString(), Color.red);
+        
+    }
+    //create the ui effecct.
 
+
+
+    void Die(EntityHandler attacker)
+    {
+        if (attacker.ttEvents != null) attacker.ttEvents.OnKillEnemy(handler);
+        Destroy(gameObject);
     }
 
 }

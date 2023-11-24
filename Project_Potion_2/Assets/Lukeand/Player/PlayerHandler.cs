@@ -72,6 +72,10 @@ public class PlayerHandler : MonoBehaviour
         interactButton.EventPressed += InputInteract;
         interactButton.EventReleased += InputRelease;
         interactSecondButton.EventPressed += InputSecondInteract;
+
+
+
+
     }
 
     private void OnDestroy()

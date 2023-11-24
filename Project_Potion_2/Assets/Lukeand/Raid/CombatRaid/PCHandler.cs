@@ -9,6 +9,8 @@ public class PCHandler : MonoBehaviour
 {
     ChampClass champ;
 
+    EntityHandler entityHandler;
+
     [Separator("SCRIPT")]
     [HideInInspector] public PlayerMove move;
     [HideInInspector] public PlayerInventory inventory;
@@ -24,6 +26,8 @@ public class PCHandler : MonoBehaviour
     public FloatingJoystick joystick;
     public InputButton interactButton;
     public InputButton interactSecondButton;
+    [SerializeField] AbilityButton skill1Button;
+    [SerializeField] AbilityButton skill2Button;
 
     [Separator("ALLY")]
     public AllyCombatHandler allyTemplate;
@@ -35,21 +39,31 @@ public class PCHandler : MonoBehaviour
     [Separator("TARGETTING")]
     [SerializeField] GameObject targettingAim;
 
+
+    [Separator("DEBUG")]
+    [SerializeField] bool DEBUGcannotAutoAttack;
+
     private void Start()
     {
 
         controller = GetComponent<PlayerController>();
-
+        entityHandler = GetComponent<EntityHandler>();
+        
+        
         if(DEBUGstartChampData != null)
         {
             SetUp(new ChampClass(DEBUGstartChampData), new List<ChampClass>());
         }    
     }
 
+
+
+
     private void FixedUpdate()
     {
         HandleTargetting();
         AutoAttacking();
+        HandleCooldown();
     }
 
 
@@ -62,6 +76,22 @@ public class PCHandler : MonoBehaviour
         {
             CreateAlly(item);
         }
+        
+        SetUpAbilities();
+    }
+
+    void SetUpAbilities()
+    {
+        champ.autoAttack.SetUp(entityHandler);
+
+        champ.skill1.SetUp(entityHandler);
+        champ.skill1.SetUpUnit(skill1Button);
+        //champ.skill2.SetUp(entityHandler);
+        //champ.skill2.SetUpUnit(skill2Button);
+
+        champ.passiveMain.SetUp(entityHandler);
+        champ.passiveSupport.SetUp(entityHandler);
+
     }
 
     void CreateAlly(ChampClass allyChamp)
@@ -127,6 +157,11 @@ public class PCHandler : MonoBehaviour
     void HandleTargetting()
     {
         //attack the closest target.
+
+       
+
+        if(entityHandler == null) return;
+
         targettingAim.SetActive(currentTarget != null);
        
         if (currentTarget != null)
@@ -164,6 +199,7 @@ public class PCHandler : MonoBehaviour
         if (cast.collider == null)
         {
             currentTarget = null;
+            entityHandler.SetTarget(null);
             return;
         }
 
@@ -173,10 +209,12 @@ public class PCHandler : MonoBehaviour
         {
             Debug.Log("no dadmageable");
             currentTarget = null;
+            entityHandler.SetTarget(null);
             return;
         }
 
         currentTarget = damageable;
+        entityHandler.SetTarget(currentTarget);
         
         //and we keep spawning the target in the currenttarget.
 
@@ -189,31 +227,34 @@ public class PCHandler : MonoBehaviour
     //if you are not moving you are attacking the currentarget.
     //
 
-    float currentAttackCooldown;
-    float totalAttackCooldown;
+
 
     void AutoAttacking()
     {
-        if(totalAttackCooldown > currentAttackCooldown)
-        {
-            currentAttackCooldown += 0.01f;
-        }
 
+        if (DEBUGcannotAutoAttack) return;
+
+        champ.autoAttack.HandleCooldown();
 
         if (currentTarget == null) return;
         if (controller.IsMoving()) return;
 
-        //
+        champ.autoAttack.TryToCall();
 
-        if(currentAttackCooldown >= totalAttackCooldown)
-        {
-            //then we attack the current target.          
-            
-        }
 
+
+       
+        
 
     }
 
+    void HandleCooldown()
+    {
+        champ.skill1.HandleCooldown();
+        champ.skill2.HandleCooldown();
+
+
+    }
 
     #endregion
 }

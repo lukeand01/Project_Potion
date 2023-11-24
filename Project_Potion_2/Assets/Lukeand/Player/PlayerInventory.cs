@@ -265,7 +265,6 @@ public class PlayerInventory : MonoBehaviour, IInventory
     }
     public void RemoveHandUnit(int index)
     {
-
         handList.RemoveAt(index);
         Destroy(handUnitList[index].gameObject);
         handUnitList.RemoveAt(index);
@@ -285,6 +284,12 @@ public class PlayerInventory : MonoBehaviour, IInventory
         {
             handUnitList[i].SetSortingOrder(25 - i);           
             handContainer.transform.GetChild(i).transform.localPosition = GetPos(i );
+        }
+
+        //everytime we update the hand we update the production ui
+        if(UIHolder.instance.production != null)
+        {
+            UIHolder.instance.production.UpdateHandList(handList);
         }
     }
 
@@ -378,7 +383,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     //make effect for the item going from end to receiver.
     #region IINVENTORY
-    List<ItemClass> iinventoryComingList = new();
+    [SerializeField]List<ItemClass> iinventoryComingList = new();
 
     public bool ICanReceive(ItemClass item)
     {

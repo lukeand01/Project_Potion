@@ -16,12 +16,35 @@ MonoBehaviour:
   champSprite: {fileID: 21300000, guid: aec0dde1a19db7a42891b3d66e364b65, type: 3}
   champModel: {fileID: 21300000, guid: 7750fc70c5e3fec47b59ceee22f6c926, type: 3}
   autoAttack:
-    activeList: []
+    abilityIcon: {fileID: 21300000, guid: 5bf81cc2e892e43a58b7bfb5a05e7c6e, type: 3}
+    abilityName: Arrow
+    abilityDescription: just shoot a basic arrow at the target.
+    initialCooldown: 2
+    activeList:
+    - {fileID: 11400000, guid: 1101c0af60e346d45bc95de6b818ace3, type: 2}
   skill1:
-    activeList: []
+    abilityIcon: {fileID: 21300000, guid: 2c5fdfb800ca24c5095ce852c6f980db, type: 3}
+    abilityName: Big Arrow
+    abilityDescription: Shoot a big arrow that goes through enemies at the current
+      target.
+    initialCooldown: 1
+    activeList:
+    - {fileID: 11400000, guid: e70cfb4812954204eb913208c2e3ba6e, type: 2}
   skill2:
+    abilityIcon: {fileID: 21300000, guid: 373b2985ce5bf2d4e9087e510d761960, type: 3}
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
     activeList: []
   passiveMain:
+    abilityIcon: {fileID: 0}
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
     passiveList: []
   passiveSupport:
+    abilityIcon: {fileID: 0}
+    abilityName: 
+    abilityDescription: 
+    initialCooldown: 0
     passiveList: []

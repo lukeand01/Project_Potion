@@ -5,12 +5,22 @@ using UnityEngine;
 public class EntityHandler : MonoBehaviour
 {
     //this is used for grouping the refereces.
-
+    //we goinna store the current target here.
+    //
      public EntityDamageable ttDamageable { get; private set; }
      public EntityDamageDealer ttDamageDealer { get; private set; }
      public EntityEvents ttEvents { get; private set; }
      public EntityMove ttMove { get; private set; }
      public EntityStat ttStat { get; private set;}
+
+    public EntityCanvas ttCanvas { get; private set; }
+
+    public EntityDamageable currentDamageableTarget { get; private set; }
+
+    public void SetTarget(EntityDamageable damageable)
+    {
+        currentDamageableTarget = damageable;
+    }
 
     private void Awake()
     {
@@ -19,6 +29,16 @@ public class EntityHandler : MonoBehaviour
         ttEvents = GetComponent<EntityEvents>();
         ttMove = GetComponent<EntityMove>();
         ttStat = GetComponent<EntityStat>();
+
+        GameObject canvasHolder = transform.Find("EntityCanvas").gameObject;
+
+        if(canvasHolder == null )
+        {
+            Debug.Log("found nothing holding a canvas");
+            return;
+        }
+
+        ttCanvas = canvasHolder.GetComponent<EntityCanvas>(); 
     }
 
 

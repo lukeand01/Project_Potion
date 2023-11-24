@@ -95,8 +95,6 @@ public class EntityStat : MonoBehaviour
         };
     }
 
-    
-
     public void AddBD(BDClass bd)
     {
         if(bd.bdType == BDType.Stat)
@@ -133,10 +131,6 @@ public class EntityStat : MonoBehaviour
         targetList.RemoveAt(index);
 
     }
-
-
-
-
     public void AddBDWithID(BDClass bd, string id)
     {       
         if (bd.IsTick())
@@ -215,6 +209,13 @@ public class EntityStat : MonoBehaviour
             }
         }
 
+    }
+
+
+    public float GetStatValue(StatType statType)
+    {
+        if (!currentStatDictionary.ContainsKey(statType)) return -1;
+        return currentStatDictionary[statType];
     }
 
 }

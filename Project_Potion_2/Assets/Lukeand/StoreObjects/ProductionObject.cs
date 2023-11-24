@@ -14,7 +14,7 @@ public class ProductionObject : StoreObject, IInteractable, IInventory
 
     bool isDone;
     CraftData currentCraft;
-    List<ItemClass> slotList = new();
+    [SerializeField] List<ItemClass> slotList = new();
     List<CraftData> currentPossibleCraftList = new();
     float totalDiff;
     float currentDiff;

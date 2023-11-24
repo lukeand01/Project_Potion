@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d0199c11aa6f514784c5c69cd8378d8, type: 3}
-  m_Name: PlayFabEditorPrefsSO
+  m_Script: {fileID: 11500000, guid: d809d50135dd1474eaec67e6b7898d43, type: 3}
+  m_Name: ActiveArrowAuto
   m_EditorClassIdentifier: 
-  DevAccountEmail: 
-  DevAccountToken: 
-  SelectedStudio: 
-  SdkPath: 
-  EdExPath: 
-  LocalCloudScriptPath: 
-  PanelIsShown: 0
-  curMainMenuIdx: 0
-  curSubMenuIdx: 0
+  baseDamage: 5
+  damageScaleClasses:
+  - stat: 3
+    scaleValue: 0.2
+  arrowTemplate: {fileID: 5059007808354856100, guid: f5f6a12a77cdef5469016b45405db78d, type: 3}

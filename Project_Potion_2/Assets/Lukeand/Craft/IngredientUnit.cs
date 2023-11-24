@@ -1,6 +1,7 @@
 using MyBox;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,9 +12,8 @@ public class IngredientUnit : ButtonBase
 
     //can be interracted to retriev it to the hand. 
     public ItemClass item { get; private set; }
-    ItemDataIngredient ingredientData;
+    ItemDataIngredient ingredientData; //these two are the same thing but one is already the pure version is that required.
 
-    [SerializeField] GameObject notClickableImage;
     [SerializeField] GameObject empty;
 
     [Separator("Availability")]
@@ -21,14 +21,16 @@ public class IngredientUnit : ButtonBase
     [SerializeField] Color greenColor;
     [SerializeField] Color yellowColor;
     [SerializeField] Color redColor;
-    AvailabityType currentAvailabityType;
+    [SerializeField]AvailabityType currentAvailabityType;
 
-    Image portrait;
+    [SerializeField]Image portrait;
+    [SerializeField] TextMeshProUGUI nameText;
 
     [SerializeField]bool isHand;
     bool isClickable;
     public void SetUp(ItemClass item, bool isHand)
     {
+
         uiHandler = UIHolder.instance.production;
 
         this.isHand = isHand;
@@ -37,7 +39,7 @@ public class IngredientUnit : ButtonBase
        
         this.item = item;
 
-        if (item.data == null) return;
+        if (item.data == null) return;      
 
         ItemDataIngredient foundIngredient = item.data.GetIngredient();
         this.ingredientData = foundIngredient;
@@ -47,33 +49,38 @@ public class IngredientUnit : ButtonBase
             currentAvailabityType = AvailabityType.NotType;
             availabilityImage.color = redColor;
         }
+
+       
     }
 
     public void UpdateUI()
     {
-        empty.SetActive(item.data == null);
+        empty.SetActive(item.data == null); //we make it dark if it does not have data.
 
-        if (item.data == null) return;
+        if (item.data == null)
+        {
 
-        ControlClickable(ingredientData != null);
+            return;
+        }
 
-        if (ingredientData == null) return;
-       
-        if (ingredientData != null) portrait.sprite = ingredientData.itemSprite;
+        
+
+        portrait.sprite = item.data.itemSprite;
+        nameText.text = item.data.name;
+
     }
 
     public override void OnPointerClick(PointerEventData eventData)
     {
 
-        if (!isClickable)
-        {
-            //we warn the player that he can only use ingredients.
-            return;
-        }
+        if(item.data == null) return;
+        
+
+        if(isHand) if (currentAvailabityType == AvailabityType.NotAllowedBecauseOfRecipe || currentAvailabityType == AvailabityType.NotType) return;
+
 
         bool isSuccess = false;
 
-        Debug.Log("got here");
         if (isHand)
         {
             //if its hand chck if can send.
@@ -87,16 +94,10 @@ public class IngredientUnit : ButtonBase
 
         if (isSuccess)
         {
-            Debug.Log("it worked");
         }
 
     }
 
-    public void ControlClickable(bool choice)
-    {
-        isClickable = true;
-        notClickableImage.SetActive(!isClickable);
-    }
 
     //there are three types of ui signs: can use something, cannot us ingreidnet, andd its not ingredient.
 
@@ -108,6 +109,7 @@ public class IngredientUnit : ButtonBase
         {
             currentAvailabityType = AvailabityType.Allowed;
             availabilityImage.color = greenColor;
+            
         }
         else
         {
@@ -115,6 +117,7 @@ public class IngredientUnit : ButtonBase
             availabilityImage.color = yellowColor;
         }
 
+        
 
     }
 

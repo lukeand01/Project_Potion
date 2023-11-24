@@ -14,7 +14,7 @@ public class InputButton : ButtonBase
     [Separator("COMPONENTS")]
     [SerializeField] GameObject isHoldingImage;
     [SerializeField] TextMeshProUGUI inputText;
-    GameObject holder;
+    protected GameObject holder;
 
     public event Action EventPressed;
     public void OnPressed() => EventPressed?.Invoke();

@@ -18,7 +18,8 @@ public class ChampClass
     public AbilityPassiveClass passiveMain;
     public AbilityPassiveClass passiveSupport;
 
-
+    //these abilities have nothing on them.
+    //
 
     public int champLevel;
     public int champCopies;
@@ -28,6 +29,9 @@ public class ChampClass
         champLevel = 1;
         champCopies = 1;
         GenerateAbilities();
+
+
+
     }
     public ChampClass(ChampData data, int champLevel, int champCopies)
     {
@@ -47,6 +51,9 @@ public class ChampClass
 
     #region ABILITIES
     
+
+
+
     void GenerateAbilities()
     {
         data.GetCopyOfAttackClasses(this);
@@ -71,6 +78,7 @@ public class ChampClass
     }
     public void CallAbility(AbilityType ability, bool remove = false)
     {
+        Debug.Log("call ability " + ability);
         abilityDictionary[ability].Call(remove);
     }
 

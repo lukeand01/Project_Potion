@@ -137,8 +137,11 @@
 
 //NEXT GOAL
 //get production done.
-//it show all hand units. but show the difference between the ones you cannot use, the ones that cannot be used due to recipe and the ones that can 
-//
+///it show all hand units. but show the difference between the ones you cannot use, the ones that cannot be used due to recipe and the ones that can 
+///close ui when moves.
+//the reipes update as you put and take itens
+//click a button and locks all ingredients til everything is done.
+//when done you can just get stuff.
 
 
 //CURRENT GOAL - RAID
@@ -166,7 +169,11 @@
 //the raid ui is not that good. slow for some reason fix that.
 
 
-
+//TOMORROW GOAL
+//create two skills.
+//create the ui effect when an entity is damaged.
+//create one passive.
+//create two recipes.
 
 
 
@@ -174,4 +181,18 @@
 //TOTAL GOAL 
 //3 months of development (16/11/23 - 16/2/23)
 //money goal: 3.000 dolar over a year. (low goal)
+//
+
+
+//NEXT PROJECTS
+//PET (20/2/23 - 1/4/23)
+//GAME DEV (5/4/23 - 25/5/23)
+//HORDE SURVIVOR 
+//
+
+
+//ACTUAL PROJECTS THAT ARE POSSIBLE
+//Labyrinth project
+//Evil project
+//Doom project
 //

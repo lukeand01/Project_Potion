@@ -5,7 +5,7 @@ using UnityEngine;
 public class DamageClass 
 {
 
-    float baseDamage;
+    public float baseDamage { get; private set; }
     float critChance;
     float critDamage;
     float damageBasedInHealth;
@@ -20,9 +20,9 @@ public class DamageClass
 
     public DamageClass(float baseDamage)
     {
-        this.baseDamage = baseDamage;
-        
+        this.baseDamage = baseDamage;       
     }
+    
 
     #region MAKE
 

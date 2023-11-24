@@ -1,7 +1,9 @@
+using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UI.Image;
 
 public class ProductionUI : MonoBehaviour
 {
@@ -18,13 +20,23 @@ public class ProductionUI : MonoBehaviour
     [SerializeField] Image portrait;
     [SerializeField] BarUI bar;
     [SerializeField] Transform handContainer;
-    [SerializeField] Transform handDeliveryPos;
 
+
+    [Separator("IINVETNORY POSITIONS")]
+    [SerializeField] Transform handDeliveryPos;
+    [SerializeField] Transform productionDeliveryPos;
 
     private void Awake()
     {
         holder = transform.GetChild(0).gameObject;
     }
+
+    private void Start()
+    {
+        PlayerHandler.instance.controller.EventMoveInput += CloseUI;
+    }
+
+    void CloseUI() => ControlHolder(false);
 
     public void ControlHolder(bool choice) => holder.SetActive(choice);
 
@@ -41,12 +53,16 @@ public class ProductionUI : MonoBehaviour
         //we create the current list of ingredients 
         List<ItemClass> slotList = currentProduction.GetSlotList();
         ClearUI(ingredientContainer);
+        ingredientUnitList.Clear();
 
         foreach (var item in slotList)
         {
             IngredientUnit newObject = Instantiate(ingredientUnitTemplate, ingredientContainer.position, Quaternion.identity);
-            newObject.transform.parent = ingredientContainer.parent;
+            newObject.transform.parent = ingredientContainer;
             newObject.SetUp(item, false);
+            newObject.UpdateUI();
+            item.UpdateIngredientUnit(newObject);
+            ingredientUnitList.Add(newObject);
         }
 
         foreach (var item in handList)
@@ -67,8 +83,22 @@ public class ProductionUI : MonoBehaviour
         {
             IngredientUnit newObject = Instantiate(ingredientUnitTemplate, Vector2.zero, Quaternion.identity);
             newObject.SetUp(item, true);
+            newObject.UpdateUI();
             newObject.transform.parent = handContainer;
-            if(!newObject.ShouldSkipThisHand()) handList.Add(newObject);
+
+            if(!newObject.ShouldSkipThisHand())
+            {
+                handList.Add(newObject);
+            }
+
+        }
+
+        if (currentProduction == null) return;
+
+
+        foreach (var item in handList)
+        {
+            item.UpdateAvaialabity(currentProduction.CanAddIngredient(item.item.data.GetIngredient()));
         }
 
     }
@@ -92,25 +122,25 @@ public class ProductionUI : MonoBehaviour
         //ask if there is space in playereinventory.
         //just that.
 
+
         PlayerInventory inventory = PlayerHandler.instance.inventory;
 
-        if(inventory == null) return false;
+        if (inventory == null) return false;
 
-        if(!inventory.HasSpaceInHand()) return false;
+        if (!inventory.HasSpaceInHand()) return false;
 
         //remove from production.
         ItemClass productionItem = GetItemFromProduction(index);
 
-        if (!inventory.ICanReceive(productionItem))
-        {
-            Debug.Log("cannot send to the inventory");
-            return false;
-        }
+        
 
-        GameHandler.instance.CreateFTEImage(productionItem, original, handDeliveryPos, transform, 1000);
+
+        ItemClass itemToGive = new ItemClass(productionItem.data, productionItem.quantity);
+
+        GameHandler.instance.CreateFTEImage(productionItem, original, handDeliveryPos, transform, 150);
 
         currentProduction.RemoveIngredient(index);
-        inventory.AddItemToHand(productionItem);
+        inventory.AddItemToHand(itemToGive);
 
         return true;
     }
@@ -124,7 +154,12 @@ public class ProductionUI : MonoBehaviour
 
         if (productionIndex == -1) return false;
 
+
+       
+
         ItemClass handItem = inventory.GetItemInHand(index);
+
+        GameHandler.instance.CreateFTEImage(handItem, handDeliveryPos, productionDeliveryPos, transform, 150);
 
         currentProduction.AddIngredient(handItem, productionIndex);
         inventory.RemoveHandUnit(index);

@@ -11,33 +11,45 @@ public class AbilityClass
 {
     //
     public EntityHandler entityHandler { get; private set; }
-    public void SetUpEntity(EntityHandler entityHandler)
+    public AbilityButton uiButton { get; private set; }
+
+    [Separator("GENERAL VARIABLES")]
+    public Sprite abilityIcon;
+    public string abilityName;
+    [TextArea] public string abilityDescription;
+
+
+    //need to get the current target from here.
+    public void SetUp(EntityHandler entityHandler)
     {
         this.entityHandler = entityHandler;
+        SetUpCooldown();
+    }
+
+    public void SetUpUnit(AbilityButton uiButton)
+    {
+        this.uiButton = uiButton;
+        uiButton.SetUpAbility(this);
     }
 
     public virtual void Call(bool remove = false)
     {
-        
+
     }
 
     public virtual bool CanCall()
     {
-        return false;
+        return true;
     }
 
-    
+
 
     public virtual AbilityActiveClass GetActive() => null;
     public virtual AbilityPassiveClass GetPassive() => null;
 
     
 
-    #region GENERAL VARIABLES
-    public string abilityName;
-    [TextArea]public string abilityDescription;
 
-    #endregion
 
     #region COOLDOWN
     //even passives can have cooldown.
@@ -45,11 +57,11 @@ public class AbilityClass
     public float initialCooldown;
     float currentCooldown;
     float totalCooldown;
-    
-    public void SetUpCooldown(float total, float current)
+
+    public void SetUpCooldown()
     {
-        currentCooldown = current;
-        totalCooldown = total;
+        totalCooldown = initialCooldown;
+        currentCooldown = 0;
     }
 
     public void ChangeCurrentCooldown(float value)
@@ -64,17 +76,44 @@ public class AbilityClass
         totalCooldown = Mathf.Clamp(totalCooldown, 0, 999);
     }
 
-    void HandleCooldown()
+    public void HandleCooldown()
     {
-        if(currentCooldown > 0)
+        if (currentCooldown > 0)
         {
-            currentCooldown -= Time.deltaTime;
+            currentCooldown -= 0.01f;
+
         }
+
+        if(uiButton != null) uiButton.ControlCooldown(currentCooldown, totalCooldown);
     }
+
+    public void TryToCall()
+    {
+        if (currentCooldown > 0) return;
+        if (!CanCall()) return;
+
+        Call(); //this is just for abilities so its always false.
+        currentCooldown = totalCooldown;
+    }
+
+
     public bool IsReadyToUse()
     {
         return currentCooldown <= 0;
     }
+
+    #endregion
+
+    public virtual bool HasCompleteData()
+    {
+        return false;
+    }
+
+
+
+    #region ATTACKER
+
+
 
     #endregion
 }
@@ -84,13 +123,34 @@ public class AbilityActiveClass : AbilityClass
 {
     public List<AbilityActiveData> activeList = new();
 
+    public override bool HasCompleteData()
+    {
+        if(activeList.Count <= 0 )
+        {
+            Debug.Log("it was zero: " + abilityName);
+            return false;
+        }
+
+        for (int i = 0; i < activeList.Count; i++)
+        {
+            if (activeList[i] == null)
+            {
+                Debug.Log("this was null " + abilityName);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     public AbilityActiveClass(AbilityActiveClass refClass)
     {
         foreach (var item in refClass.activeList)
         {
             activeList.Add(item);
         }
-
+        abilityIcon = refClass.abilityIcon;
         initialCooldown = refClass.initialCooldown;
         abilityName = refClass.abilityName;
         abilityDescription = refClass.abilityDescription;
@@ -109,10 +169,30 @@ public class AbilityActiveClass : AbilityClass
         
     }
 
-    
-
+   
     public override AbilityActiveClass GetActive() => this;
 
+    public List<float> GetScaledValueFromActiveList()
+    {
+        //the problem is that this can be more than one.
+        List<float> newList = new List<float>();
+
+        //i get the value for eah and put in the list
+
+        foreach (var item in activeList)
+        {
+            float newValue = 0;
+            newValue = item.baseDamage;
+
+
+
+        }
+
+
+
+
+        return newList;
+    }
 
     //if one cannot then none can or if only those that cannot.
     //
@@ -120,7 +200,7 @@ public class AbilityActiveClass : AbilityClass
     {
         //for now this only not goes if all are not true.
 
-        if (!IsReadyToUse()) return false;
+        if (!IsReadyToUse()) return false; //if its in cooldown
 
         int amountFailed = 0;
        
@@ -138,12 +218,26 @@ public class AbilityPassiveClass : AbilityClass
 {
     public List<AbilityPassiveData> passiveList = new(); //the passive list is set up right at the start.
 
+    public override bool HasCompleteData()
+    {
+        if (passiveList.Count <= 0) return false;
+
+        for (int i = 0; i < passiveList.Count; i++)
+        {
+            if (passiveList[i] == null) return false;
+        }
+
+        return true;
+    }
+
+
     public AbilityPassiveClass(AbilityPassiveClass refClass)
     {
         foreach (var item in refClass.passiveList)
         {
             passiveList.Add(item);
         }
+        abilityIcon = refClass.abilityIcon;
         initialCooldown = refClass.initialCooldown;
         abilityName = refClass.abilityName;
         abilityDescription = refClass.abilityDescription;

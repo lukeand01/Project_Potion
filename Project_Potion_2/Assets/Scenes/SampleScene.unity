@@ -1103,6 +1103,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1551143469}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &301715392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 301715393}
+  m_Layer: 5
+  m_Name: ProductionDeliveryPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &301715393
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301715392}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 187524242203258811}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -49, y: 323}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &313747680
 GameObject:
   m_ObjectHideFlags: 0
@@ -6254,6 +6289,7 @@ MonoBehaviour:
     listIndex: 0
   chestLimit: 5
   chestList: []
+  iinventoryComingList: []
 --- !u!114 &2011913401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7004,12 +7040,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2037275065315103481}
   - {fileID: 5370047890912909997}
   - {fileID: 3220468882488884487}
-  - {fileID: 2037275065315103481}
   - {fileID: 7862060245030357324}
   - {fileID: 2233956317181773349}
   - {fileID: 7365839166611379429}
+  - {fileID: 301715393}
   m_Father: {fileID: 6190007412846020235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -8508,10 +8545,10 @@ MonoBehaviour:
   m_Padding:
     m_Left: 0
     m_Right: 0
-    m_Top: 0
+    m_Top: 29
     m_Bottom: 0
   m_ChildAlignment: 0
-  canControlSize: 0
+  canControlSize: 1
   size: {x: 1, y: 1, z: 1}
   spacing: 0
   spacingY: 0
@@ -10805,6 +10842,7 @@ MonoBehaviour:
   bar: {fileID: 5013577446686220021}
   handContainer: {fileID: 5370047890912909997}
   handDeliveryPos: {fileID: 7365839166611379429}
+  productionDeliveryPos: {fileID: 301715393}
 --- !u!224 &6190007412846020235
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12142,7 +12180,7 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 0
   canControlSize: 1
-  size: {x: 0.1, y: 0.1, z: 1}
+  size: {x: 0.15, y: 0.12, z: 1}
   spacing: 0
   spacingY: 12.4
   gridOrientation: 0

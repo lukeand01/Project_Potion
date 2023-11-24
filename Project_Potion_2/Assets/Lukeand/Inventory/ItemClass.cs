@@ -8,7 +8,7 @@ public class ItemClass
 {
     public ItemData data;
     public int quantity;
-    [HideInInspector]public int listIndex;
+    [SerializeField]public int listIndex;
 
     public ItemClass(ItemData data, int quantity, int listIndex)
     {
@@ -76,7 +76,10 @@ public class ItemClass
     void UpdateUI()
     {
         if (chestUnit != null) chestUnit.UpdateUI();
-        if (ingredientUnit != null) ingredientUnit.UpdateUI();
+        if (ingredientUnit != null)
+        {
+            ingredientUnit.UpdateUI();
+        }
     }
 
     ItemHandUnit handUnit;
