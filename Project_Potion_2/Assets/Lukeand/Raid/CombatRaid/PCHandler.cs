@@ -7,7 +7,10 @@ using UnityEngine;
 
 public class PCHandler : MonoBehaviour
 {
-    ChampClass champ;
+    public static PCHandler instance;
+
+
+    public ChampClass champ { get; private set; }
 
     EntityHandler entityHandler;
 
@@ -30,8 +33,7 @@ public class PCHandler : MonoBehaviour
     [SerializeField] AbilityButton skill2Button;
 
     [Separator("ALLY")]
-    public AllyCombatHandler allyTemplate;
-    List<AllyCombatHandler> allyChampList = new();
+    public List<AllyCombatHandler> allyChampList = new();
 
     [Separator("DEBUG")]
     [SerializeField] ChampData DEBUGstartChampData;
@@ -43,6 +45,22 @@ public class PCHandler : MonoBehaviour
     [Separator("DEBUG")]
     [SerializeField] bool DEBUGcannotAutoAttack;
 
+    public float raidGainedExperiene { get; private set; } //this is given to the char in the end.
+
+    private void Awake()
+    {
+
+        if(instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+        
+    }
+
     private void Start()
     {
 
@@ -52,45 +70,94 @@ public class PCHandler : MonoBehaviour
         
         if(DEBUGstartChampData != null)
         {
-            SetUp(new ChampClass(DEBUGstartChampData), new List<ChampClass>());
+            SetUp(new ChampClass(DEBUGstartChampData));
         }    
     }
 
 
-
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Debug.Log("triggered");
+            entityHandler.ttEvents.OnKillEnemy(entityHandler);
+        }
+    }
 
     private void FixedUpdate()
     {
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            EndRaid();
+        }
+
         HandleTargetting();
         AutoAttacking();
         HandleCooldown();
+        HandleRaidInteract();
     }
 
-
-    #region SETTERS
-    public void SetUp(ChampClass mainChamp, List<ChampClass> allyChampList)
+    #region GETTERS
+    public List<ChampClass> GetAllies()
     {
-        champ = mainChamp;
+        List<ChampClass> newList = new();
 
         foreach (var item in allyChampList)
         {
-            CreateAlly(item);
+            newList.Add(item.champ);
         }
+
+        return newList;
+    }
+
+    #endregion
+
+    #region SETTERS
+    public void SetUp(ChampClass mainChamp)
+    {
+        champ = mainChamp;
+
+        
         
         SetUpAbilities();
+
+        if(entityHandler != null)
+        {
+            //then we pass this information to the stat.
+            if(entityHandler.ttStat != null)
+            {
+                entityHandler.ttStat.SetUp(champ.statList);
+            }
+            else
+            {
+                Debug.Log("there was no entity handler.");
+            }
+        }
+
+
     }
+
+    public void SetAllies(List<AllyCombatHandler> allyList)
+    {
+        allyChampList = allyList;
+    }
+
 
     void SetUpAbilities()
     {
-        champ.autoAttack.SetUp(entityHandler);
+        champ.autoAttack.SetUp(entityHandler, AbilityType.AutoAttack);
 
-        champ.skill1.SetUp(entityHandler);
+        champ.skill1.SetUp(entityHandler, AbilityType.Skill1);
         champ.skill1.SetUpUnit(skill1Button);
-        //champ.skill2.SetUp(entityHandler);
-        //champ.skill2.SetUpUnit(skill2Button);
+        champ.skill2.SetUp(entityHandler, AbilityType.Skill2);
+        champ.skill2.SetUpUnit(skill2Button);
 
-        champ.passiveMain.SetUp(entityHandler);
-        champ.passiveSupport.SetUp(entityHandler);
+        champ.passiveMain.SetUp(entityHandler, AbilityType.PassiveMain);
+        champ.passiveMain.Call();
+
+
+        
 
     }
 
@@ -222,6 +289,29 @@ public class PCHandler : MonoBehaviour
 
     #endregion
 
+    #region INTERACTIONRANGE
+    //in the raid you interact with anything you get close.
+
+    void HandleRaidInteract()
+    {
+        RaycastHit2D hit = Physics2D.CircleCast(transform.position, 0.5f, Vector2.one, 50, LayerMask.GetMask(LayerMaskEnum.Interact.ToString()));
+
+        if(hit.collider == null)
+        {            
+            return;
+        }
+        Debug.Log("hit something");
+
+        IRaidInteractable raidInteractable = hit.collider.gameObject.GetComponent<IRaidInteractable>();
+
+        if (raidInteractable == null) return;
+
+        raidInteractable.Interact(this);
+
+    }
+
+
+    #endregion
 
     #region ATTACKING
     //if you are not moving you are attacking the currentarget.
@@ -237,11 +327,11 @@ public class PCHandler : MonoBehaviour
         champ.autoAttack.HandleCooldown();
 
         if (currentTarget == null) return;
-        if (controller.IsMoving()) return;
+        if (!entityHandler.ttStat.HasBDBoolean(BDBooleanType.ShootAndMove) && controller.IsMoving()) return;
 
         champ.autoAttack.TryToCall();
-
-
+        //but here we attribute a different cooldown value.
+        //cooldown of abiities work as percentage. 
 
        
         
@@ -257,5 +347,52 @@ public class PCHandler : MonoBehaviour
     }
 
     #endregion
+
+    #region EXPERIENCE
+    public void GainExperience(float value)
+    {
+        raidGainedExperiene += value;
+    }
+
+    public void ReduceExperience(float value)
+    {
+        raidGainedExperiene -= value;
+
+        if(raidGainedExperiene < 0)
+        {
+            Debug.Log("soimething went wrong");
+        }
+    }
+
+    public float GetExperinece(float min)
+    {
+
+        if(raidGainedExperiene >= min) 
+        {
+            return min;
+        }
+        else
+        {
+            return raidGainedExperiene;
+        }
+
+
+    }
+
+    #endregion
+
+
+    bool debugCalledEndRaid;
+
+    public void EndRaid()
+    {
+        //1 - acctually give the score
+        //2 - then call the ui
+
+        //RaidScoreType scoreType = RaidHandler.instance.GetRaidScore();
+
+    }
 }
 
+//but i want to set it up for enemies as well.
+//

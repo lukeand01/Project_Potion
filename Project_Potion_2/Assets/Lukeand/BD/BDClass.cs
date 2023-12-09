@@ -9,7 +9,7 @@ public class BDClass
     //this is a buff or debuff class.
     //but can also be a burn.
     //
-    string id;
+    public string id { get; private set; }
     BDData data; //description and graphics data. it gets it once the bd is given.
     [HideInInspector]public BDType bdType;
 
@@ -45,6 +45,8 @@ public class BDClass
     EntityHandler attacker;
     EntityHandler attacked;
 
+    public BDBooleanType booleanType { get; private set; }
+
 
 
     public BDClass(string id, StatType stat)
@@ -53,7 +55,7 @@ public class BDClass
         this.statType = stat;
         this.id = id;
 
-        data = GameHandler.instance.GetBDRef(stat.ToString());
+        //data = GameHandler.instance.GetBDRef(stat.ToString());
 
     }
     public BDClass(string id, AbilityPassiveClass triggerPassive)
@@ -61,7 +63,7 @@ public class BDClass
         this.triggerPassive = new AbilityPassiveClass(triggerPassive);
         this.id = id;
 
-        data = GameHandler.instance.GetBDRef(triggerPassive.abilityName);
+        //data = GameHandler.instance.GetBDRef(triggerPassive.abilityName);
     }
     public BDClass(string id, DamageType damageType, int tickTotal, float tickTimeTotal)
     {
@@ -69,6 +71,15 @@ public class BDClass
         this.damageType = damageType;
         MakeTick(tickTotal, tickTimeTotal);
     }
+
+    public BDClass(string id, BDBooleanType booleanType)
+    {
+        this.id = id;
+        this.booleanType = booleanType;
+        bdType = BDType.Boolean;
+    }
+
+
     public BDClass(BDClass refClass)
     {
         //copy everything here.
@@ -79,11 +90,19 @@ public class BDClass
     public void Stack(BDClass bd)
     {
         //get another bd to stack here
+        Debug.Log("stack");
         if (doesStackingRefreshTimer)
         {
             current = total;
         }
 
+        if(stackCurrent >= stackTotal)
+        {
+            Debug.Log("can no longer stack");
+            return;
+        }
+
+        stackCurrent += 1;
         valueFlat += bd.valueFlat;
         ValuePercentBasedOnCurrentValue += bd.ValuePercentBasedOnCurrentValue;
         
@@ -213,10 +232,11 @@ public class BDClass
 
     #endregion
 
-    public float GetStrenghtForStatChange(float currentValue)
+    public float GetValueBasedInCurrentValue(float currentValue)
     {
         //we change info here based in stats.
-        float percentAdd = currentValue * ValuePercentBasedOnCurrentValue * 0.01f;
+        float percentAdd = (currentValue * ValuePercentBasedOnCurrentValue) * 0.01f;
+
         lastValue = valueFlat + percentAdd;
         return lastValue;
     }
@@ -228,11 +248,15 @@ public class BDClass
 
     }
 
+
+    #region BOOLEAN
     public bool IsTick() => tickTotal > 0;
     public bool IsTemp() => total > 0;
+    public bool IsStackable() => stackTotal > 0;
 
     public bool IsSameID(string id) => id == this.id;
 
+    #endregion
 
     #region UI
     BDUnit unit;
@@ -250,7 +274,8 @@ public enum BDType
     Undecided,
     Stat,
     Passive,
-    Damage
+    Damage,
+    Boolean
 }
 
 
@@ -267,6 +292,14 @@ public class PercentStatClass
         this.percentValue = percentValue;
         this.percentValue = Mathf.Clamp(this.percentValue, 0, 100);
     }
+}
+
+
+public enum BDBooleanType
+{
+    ShootAndMove
+
+
 }
 
 

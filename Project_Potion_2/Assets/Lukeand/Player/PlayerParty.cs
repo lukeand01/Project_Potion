@@ -47,3 +47,6 @@ public class PlayerParty : MonoBehaviour
 
 
 }
+
+//how should i deal with the loading?
+//because i create new problems when i load the player. but how do i restore the champ? or do i leave turned off but dont destroy.

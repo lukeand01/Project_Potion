@@ -47,6 +47,7 @@ public class InputButton : ButtonBase
             Debug.Log("the holder is null");
             return;
         }
+
         holder.SetActive(choice);
     }
 

@@ -32,7 +32,7 @@ public class AbilityActiveBigArrow : AbilityActiveData
 
 
         float damageValue = GetTotalScaleValue(ability.entityHandler.ttStat);
-        damageDealer.SetUp(new DamageClass(damageValue));
+        damageDealer.SetUp( ability.entityHandler, new DamageClass(damageValue));
         damageDealer.SetID(currentDamageableTarget.id);
         damageDealer.SetAmountOfCollisionAllowed(10);
     }

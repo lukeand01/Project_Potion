@@ -21,10 +21,10 @@ public class AbilityButton : InputButton
 
     void UpdateUI()
     {
+
         if (!HasAbilityAssigned())
         {
             holder.SetActive(false);
-            Debug.Log("this class has abilities not assigned");
             return;
         }
 
@@ -38,12 +38,10 @@ public class AbilityButton : InputButton
     {
         if (ability == null)
         {
-            Debug.Log("the ability was null");
             return false;
         }
         if (!ability.HasCompleteData())
         {
-            Debug.Log("has no complete data");
             return false;
         }
 
@@ -52,6 +50,9 @@ public class AbilityButton : InputButton
 
     private void FixedUpdate()
     {
+
+        if (!HasAbilityAssigned()) return;
+
         if (ability.IsReadyToUse())
         {
             if (!ability.CanCall())
@@ -81,7 +82,7 @@ public class AbilityButton : InputButton
         if (ability.IsReadyToUse())
         {
             //then we can use the ability.
-            Debug.Log("can use this fella");
+
             ability.TryToCall();
         }
 

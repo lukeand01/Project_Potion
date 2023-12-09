@@ -29,11 +29,11 @@ public class PlayerInventory : MonoBehaviour, IInventory
     [Separator("CHEST")]
     [SerializeField] List<ItemClass> initialChestList = new();
     [SerializeField] int chestLimit;
-    [SerializeField]List<ItemClass> chestList = new();
+    public List<ItemClass> chestList { get; private set; } = new();
 
     [Separator("RAID")]
     int raidMoney;
-    List<ItemClass> raidList = new();
+    [SerializeField] public List<ItemClass> raidList = new();
     
 
     private void Start()
@@ -113,7 +113,7 @@ public class PlayerInventory : MonoBehaviour, IInventory
         //we only stop checking when there is no more space
         //then we return the amount we couldnt 
 
-        List<ItemClass> stackableList = GetChestStackableList(item.data);
+        List<ItemClass> stackableList = GetStackableList(item.data, chestList);
 
         int brakeFirst = 0;
 
@@ -148,6 +148,10 @@ public class PlayerInventory : MonoBehaviour, IInventory
         return 0;
     }
 
+    public void FullUpdateChest()
+    {
+        //the problem with this i need to update all the ui. if i am in the other side i ccannot do that.
+    }
 
     void StackItem(ItemClass item, List<ItemClass> stackableList)
     {
@@ -182,16 +186,14 @@ public class PlayerInventory : MonoBehaviour, IInventory
     }
 
     
-
-    
     //first we check if there is space to stack.
     //then we check the next free slot.
 
-    List<ItemClass> GetChestStackableList(ItemData data)
+    List<ItemClass> GetStackableList(ItemData data, List<ItemClass> targetList)
     {
         List<ItemClass> newList = new();
 
-        for (int i = 0; i < chestList.Count; i++)
+        for (int i = 0; i < targetList.Count; i++)
         {
             if (chestList[i].data == data && chestList[i].quantity < data.stackLimit) newList.Add(chestList[i]);
         }
@@ -228,6 +230,59 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
         return -1;
     }
+
+
+
+    //we need funcctions for the raid inventory caluclations
+    //1 - the list of all itens received b6 the player is received. all itens are always grouped.
+    //2 - we get the itens we can stack.
+    //3 - the rest we ask if we can put it in the chest or in sell
+
+
+    public List<ItemClass> GetListForRaidInventoryBasedInChestInventory(List<ItemClass> itemList)
+    {
+        List<ItemClass> newList = new();
+
+        for (int i = 0; i < itemList.Count; i++)
+        {
+            bool isStackable = GetChestNextStackable(itemList[i].data) != -1;
+
+            if (isStackable)
+            {
+                itemList[i].SetRaidInventoryType(RaidInventoryType.Stack);
+                newList.Add(itemList[i]);
+                itemList.RemoveAt(i);
+                i--;
+            }
+        }
+
+        //then we chekc whats left.
+        foreach (var item in itemList)
+        {
+            int index = GetChestNextFreeSlot();
+
+            if(index == -1)
+            {
+                item.SetRaidInventoryType(RaidInventoryType.Sell);
+            }
+            else
+            {
+                item.SetRaidInventoryType(RaidInventoryType.Can);
+            }
+
+            newList.Add(item);
+        }
+
+
+
+
+
+        return newList;
+
+    }
+
+    
+
 
 
     #endregion
@@ -374,8 +429,46 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     public void AddRaidItem(ItemClass item)
     {
+        List<ItemClass> stackableList = GetStackableList(item.data, raidList);
+
+        int brakeFirst = 0;
+
+        while (item.quantity > 0)
+        {
+            brakeFirst++;
+            if (brakeFirst > 1000)
+            {
+                Debug.Log("break first");
+                break;
+            }
 
 
+            if (stackableList.Count > 0)
+            {
+                StackItem(item, stackableList);
+                continue;
+            }
+
+            int freeSlot = GetChestNextFreeSlot();
+
+            if (freeSlot != -1)
+            {
+                CreateItem(freeSlot, item, stackableList);
+                continue;
+            }
+
+
+        }
+
+        Debug.Log("got to the end");
+        UIHolder.instance.raidInventory.UpdateUI(raidList);
+    }
+
+    public void RemoveItem()
+    {
+
+
+        UIHolder.instance.raidInventory.UpdateUI(raidList);
     }
 
 

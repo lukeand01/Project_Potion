@@ -9,10 +9,13 @@ public class ItemData : ScriptableObject
     public string itemName;
     [TextArea]public string itemDescription;
     public Sprite itemSprite;
-    public int stackLimit;
+    [HideInInspector]public int stackLimit; //you can infinetely stack in the chest now
     public ItemType itemType;
 
-
+    private void Awake()
+    {
+        stackLimit = 99999;
+    }
 
     public virtual ItemDataIngredient GetIngredient() => null;
 

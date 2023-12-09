@@ -8,9 +8,12 @@ public class GameHandler : MonoBehaviour
 
     public static GameHandler instance;
 
-    [HideInInspector] public StoreHandler store;
-    [HideInInspector] public NPCHandler npc;
-    [HideInInspector] public CraftHandler craft;
+    [HideInInspector] public StoreHandler store { get; private set; }
+    [HideInInspector] public NPCHandler npc { get; private set; }
+    [HideInInspector] public CraftHandler craft { get; private set; }
+    [HideInInspector] public SceneLoader loader { get; private set; }
+    [HideInInspector] public RaidHandler raid { get; private set; }
+
 
     [Separator("RAID REF")]
     public List<RaidWorldData> raidWorldList = new();
@@ -24,6 +27,12 @@ public class GameHandler : MonoBehaviour
     [SerializeField] FadeUI fadeUITemplate;
     [SerializeField] FollowTillEndImage fteImageTemplate;
 
+
+    //this works for now but this is not good.
+    [HideInInspector] public PlayerHandler playerHandler {  get; private set; }
+
+
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -32,11 +41,13 @@ public class GameHandler : MonoBehaviour
         store = GetComponent<StoreHandler>();
         npc = GetComponent<NPCHandler>();
         craft = GetComponent<CraftHandler>();
+        raid = GetComponent<RaidHandler>(); 
     }
 
     private void Start()
     {
         UIHolder.instance.raid.SetUp(raidWorldList);
+        if(PlayerHandler.instance != null) playerHandler = PlayerHandler.instance;
     }
 
     public void CreateSFX(AudioClip clip)
@@ -78,35 +89,16 @@ public class GameHandler : MonoBehaviour
         return null;
     }
 
-    List<ChampClass> champList;
-    RaidStageData stage;
-    public void StoreInformationForRaid(RaidStageData stage, List<ChampClass> champList)
-    {
-        this.stage = stage;
-        this.champList = champList;
-    }
 
-    public void SendInformationToRaid()
-    {
-        //we get these two and send to the
-        if (RaidHandler.instance == null)
-        {
-            Debug.Log("gamehandler didnt find raid");
-            return;
-        }
-        if (champList == null)
-        {
-            Debug.Log("gamehandler has no champlist");
-            return;
-        }
-        if (stage == null)
-        {
-            Debug.Log("gamehandler has no stage");
-            return;
-        }
 
-        RaidHandler.instance.StartNewRaid(stage, champList);
-
-    }
+    //the player is not destroyed.
+    //therefore we can always reachc its thing.
 
 }
+//just wait a second. this is a mess.
+//lets improve this
+//1 - we call in the orioginal sene for the raid to start. now i need to store the chestlist and champlist
+//the champlist should be just the fella that the player chose.
+//2 - the raid handler should exist in all scenes. it will carry those variables.
+//3 - playerhandler is not deleted but it will be turned off in any scene. just so i dont need to load it again. 
+//4 - when we come back we will update the original list with this list.

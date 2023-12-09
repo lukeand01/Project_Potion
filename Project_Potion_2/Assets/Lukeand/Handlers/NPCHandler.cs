@@ -42,6 +42,8 @@ public class NPCHandler : MonoBehaviour
         
         bool found = newObject.OrderHasItemToChoose();
 
+
+
         Debug.Log("found ? " + found);
         if (!found)
         {
@@ -85,3 +87,8 @@ public class NPCHandler : MonoBehaviour
     }
 }
 
+//the logic for the npc.
+//we choose a potion type. if there is any avaible potion the potion type will only be one available
+//then we choose the wealth modifier. that is based in reputation. the higher the higher the chancec of the wealth 
+//the cchoice itself of the potion is random only based in potion type.
+//

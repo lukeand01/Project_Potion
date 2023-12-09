@@ -14,6 +14,8 @@ public class ProjectilBase : MonoBehaviour
     float speed;
     ProjectilType type;
 
+    EntityHandler attacker;
+
     public void SetUpTarget(Transform target, float speed)
     {
         this.target = target;

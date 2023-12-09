@@ -1,3 +1,4 @@
+using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,28 @@ public class ChampData : ScriptableObject
     public Sprite champSprite;
     public Sprite champModel;
 
+    //every champ has base stats and scaling.
+    [Separator("STATS")]
+    public List<StatClass> baseStatLst = new List<StatClass>();
+    public List<StatClass> scalingStatList  = new List<StatClass>();
+    public List<StatType> refList {  get; private set; }
 
+    private void Awake()
+    {
+        refList = new List<StatType>()
+       {
+           StatType.Health,
+           StatType.Armor,
+           StatType.MoveSpeed,
+           StatType.Damage,
+           StatType.AutoAttackCooldown,
+           StatType.AbilityCooldown,
+       };
+           
+        
+    }
+
+    [Separator("SKILLS")]
     [SerializeField] AbilityActiveClass autoAttack;
     [SerializeField] AbilityActiveClass skill1;
     [SerializeField] AbilityActiveClass skill2;

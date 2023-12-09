@@ -6,10 +6,10 @@ public class AllyCombatHandler : MonoBehaviour
 {
     //
 
-    ChampClass champ;
-    public void SetUp()
+    public ChampClass champ {  get; private set; }
+    public void SetUp(ChampClass champ)
     {
-
+        this.champ = champ;
     }
 
 

@@ -6,7 +6,12 @@ public class EntityHandler : MonoBehaviour
 {
     //this is used for grouping the refereces.
     //we goinna store the current target here.
-    //
+    //we also give 
+
+
+
+
+
      public EntityDamageable ttDamageable { get; private set; }
      public EntityDamageDealer ttDamageDealer { get; private set; }
      public EntityEvents ttEvents { get; private set; }
@@ -22,6 +27,9 @@ public class EntityHandler : MonoBehaviour
         currentDamageableTarget = damageable;
     }
 
+
+
+
     private void Awake()
     {
         ttDamageable = GetComponent<EntityDamageable>();
@@ -30,19 +38,18 @@ public class EntityHandler : MonoBehaviour
         ttMove = GetComponent<EntityMove>();
         ttStat = GetComponent<EntityStat>();
 
-        GameObject canvasHolder = transform.Find("EntityCanvas").gameObject;
 
-        if(canvasHolder == null )
+        if(transform.childCount > 0)
         {
-            Debug.Log("found nothing holding a canvas");
-            return;
+            ttCanvas = transform.GetChild(0).gameObject.GetComponent<EntityCanvas>();
         }
+       
 
-        ttCanvas = canvasHolder.GetComponent<EntityCanvas>(); 
+        
     }
 
 
-
+    
 
 
 }

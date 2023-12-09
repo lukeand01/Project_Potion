@@ -11,47 +11,77 @@ public class ChampClass
     //we gonna pass all the refs here so we can use without affect the data.
 
     //the difference is that here. 
+
+
+    //these abilities have nothing on them.
+    //
+
+    public int champLevel { get; private set; }//the current level
+    public float champCurrentExperience { get; private set; } //the progress to the next level.
+    public float champTotalExperience { get; private set; } //the experience necessary for the current level
+    public int champStar { get; private set; } //the cap of the max level
+    public int champCopies { get; private set; }
+
+    public List<StatClass> statList = new List<StatClass>();
+    Dictionary<StatType, StatClass> statDictionary = new Dictionary<StatType, StatClass>();
+
+
+    public ChampClass(ChampData data)
+    {
+        this.data = data;
+        champLevel = 1;
+        champCopies = 1;
+        champStar = 1;
+        GenerateAbilities();
+        CreateStatList();
+    }
+    public ChampClass(ChampData data, int champLevel, int champCopies, int champStar, float champCurrentExperience)
+    {
+        this.data = data;
+        this.champLevel = champLevel;
+        this.champCopies = champCopies;
+        this.champStar = champStar;
+
+        this.champCurrentExperience = champCurrentExperience;
+        champTotalExperience = Utils.GetRequiredExperience(champLevel);
+
+        GenerateAbilities();
+        CreateStatList();
+    }
+  
+    public ChampClass(ChampClass refClass)
+    {
+        data = refClass.data;
+        champLevel = refClass.champLevel;
+        champCopies = refClass.champCopies;
+        champStar = refClass.champStar;
+        champCurrentExperience = refClass.champCurrentExperience;
+        champTotalExperience = Utils.GetRequiredExperience(champLevel);
+    }
+
+
+    //how to define how many copies are required?
+    //based on ccurrent level and rarity.
+    //
+
+    public bool HasEnoughCopies()
+    {
+        return champCopies >= champStar * 10;
+    }
+
+    public int GetCurrentRequiredCopies()
+    {
+        return 0;
+    }
+
+    #region ABILITIES
+
     Dictionary<AbilityType, AbilityClass> abilityDictionary = new();
     public AbilityActiveClass autoAttack;
     public AbilityActiveClass skill1;
     public AbilityActiveClass skill2;
     public AbilityPassiveClass passiveMain;
     public AbilityPassiveClass passiveSupport;
-
-    //these abilities have nothing on them.
-    //
-
-    public int champLevel;
-    public int champCopies;
-    public ChampClass(ChampData data)
-    {
-        this.data = data;
-        champLevel = 1;
-        champCopies = 1;
-        GenerateAbilities();
-
-
-
-    }
-    public ChampClass(ChampData data, int champLevel, int champCopies)
-    {
-        this.data = data;
-        this.champLevel = champLevel;
-        this.champCopies = champCopies;
-        GenerateAbilities();
-    }
-
-
-    public List<string> GetStatStringList()
-    {
-        List<string> newList = new();
-
-        return newList;
-    }
-
-    #region ABILITIES
-    
-
 
 
     void GenerateAbilities()
@@ -84,6 +114,87 @@ public class ChampClass
 
     #endregion
 
+    #region STATS
+
+    void CreateStatList()
+    {
+        //1 - in here we use the ref list to create a list
+        //2 - then we copy that list to the dictionary.
+        //3 - we use the dictionary to add everything from the baselist.
+        //4 - then we do it for the scaling.
+
+        foreach (var item in data.refList)
+        {
+            statList.Add(new StatClass(item, 0));
+        }
+
+        foreach (var item in statList)
+        {
+            statDictionary.Add(item.stat, item);
+        }
+
+        foreach (var item in data.baseStatLst)
+        {
+            if (statDictionary.ContainsKey(item.stat))
+            {
+                statDictionary[item.stat].value += item.value;
+            }
+            else
+            {
+                Debug.Log("something wrong here");
+            }
+        }
+
+        foreach (var item in data.scalingStatList)
+        {
+            if (statDictionary.ContainsKey(item.stat))
+            {
+                float scaledValue = item.value * champLevel;
+                statDictionary[item.stat].value += scaledValue;
+            }
+            else
+            {
+                Debug.Log("something wrong here");
+            }
+
+
+        }
+
+    }
+
+    //this is just for increasing it once.
+    void IncreaseStatByOneLevel()
+    {
+        foreach (var item in data.scalingStatList)
+        {
+            if (statDictionary.ContainsKey(item.stat))
+            {
+                statDictionary[item.stat].value += item.value;
+            }
+            else
+            {
+                Debug.Log("something wrong here");
+            }
+
+
+        }
+    }
+
+
+
+    public List<string> GetStatStringList()
+    {
+        List<string> newList = new();
+
+        foreach (var item in data.refList)
+        {
+            newList.Add(item.ToString());
+        }
+
+
+        return newList;
+    }
+    #endregion
 
     #region UI UNIT
     public void SetUIUnit(ChampUIUnit champUnit)
@@ -91,6 +202,31 @@ public class ChampClass
         this.champUnit = champUnit;
     }
     ChampUIUnit champUnit;
+    #endregion
+
+    #region LEVEL
+
+
+    public void GainExperience(float value)
+    {
+
+    }
+
+    public bool IsMaxLevel()
+    {
+        return champLevel >= champStar * 10;
+    }
+
+
+
+
+    public void GainLevel()
+    {
+        //we increase the level and change the stats.
+        champLevel += 1;
+        IncreaseStatByOneLevel();
+    }
+
     #endregion
 }
 

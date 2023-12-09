@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [System.Serializable]
 public class AbilityClass
@@ -19,10 +20,13 @@ public class AbilityClass
     [TextArea] public string abilityDescription;
 
 
+    AbilityType abilityType;
+
     //need to get the current target from here.
-    public void SetUp(EntityHandler entityHandler)
+    public void SetUp(EntityHandler entityHandler, AbilityType abilityType)
     {
         this.entityHandler = entityHandler;
+        this.abilityType = abilityType;
         SetUpCooldown();
     }
 
@@ -48,7 +52,7 @@ public class AbilityClass
     public virtual AbilityPassiveClass GetPassive() => null;
 
     
-
+    
 
 
     #region COOLDOWN
@@ -93,7 +97,25 @@ public class AbilityClass
         if (!CanCall()) return;
 
         Call(); //this is just for abilities so its always false.
-        currentCooldown = totalCooldown;
+
+        float reducingCooldown = 0;
+
+        if(abilityType == AbilityType.AutoAttack)
+        {
+            reducingCooldown = (totalCooldown * entityHandler.ttStat.GetStatValue(StatType.AutoAttackCooldown)) * 0.01f;
+
+        }
+
+        if(abilityType == AbilityType.Skill1 || abilityType == AbilityType.Skill2)
+        {
+            reducingCooldown = (totalCooldown * entityHandler.ttStat.GetStatValue(StatType.AbilityCooldown)) * 0.01f;
+        }
+
+
+        reducingCooldown = Mathf.Clamp(reducingCooldown, totalCooldown * 0.2f, totalCooldown);
+
+
+        currentCooldown = totalCooldown - reducingCooldown;
     }
 
 
@@ -127,7 +149,6 @@ public class AbilityActiveClass : AbilityClass
     {
         if(activeList.Count <= 0 )
         {
-            Debug.Log("it was zero: " + abilityName);
             return false;
         }
 

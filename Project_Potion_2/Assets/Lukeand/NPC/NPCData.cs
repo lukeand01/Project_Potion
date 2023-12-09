@@ -5,10 +5,15 @@ using UnityEngine;
 [CreateAssetMenu]
 public class NPCData : ScriptableObject
 {
-    //we use this for storing sprites for each type.
-    //maybe something else?
-    public PotionType desiredPotion;
     
 
 
+
+
+
+
 }
+
+//npc works as such
+//npc are looking for some type of potion hbut that is randomly assinged.
+//this is just used for holding sprites.

@@ -15,11 +15,17 @@ MonoBehaviour:
   champName: Boy
   champSprite: {fileID: 21300000, guid: aec0dde1a19db7a42891b3d66e364b65, type: 3}
   champModel: {fileID: 21300000, guid: 7750fc70c5e3fec47b59ceee22f6c926, type: 3}
+  baseStatLst:
+  - stat: 2
+    value: 10
+  - stat: 4
+    value: 0
+  scalingStatList: []
   autoAttack:
     abilityIcon: {fileID: 21300000, guid: 5bf81cc2e892e43a58b7bfb5a05e7c6e, type: 3}
     abilityName: Arrow
     abilityDescription: just shoot a basic arrow at the target.
-    initialCooldown: 2
+    initialCooldown: 1.2
     activeList:
     - {fileID: 11400000, guid: 1101c0af60e346d45bc95de6b818ace3, type: 2}
   skill1:
@@ -32,16 +38,18 @@ MonoBehaviour:
     - {fileID: 11400000, guid: e70cfb4812954204eb913208c2e3ba6e, type: 2}
   skill2:
     abilityIcon: {fileID: 21300000, guid: 373b2985ce5bf2d4e9087e510d761960, type: 3}
-    abilityName: 
-    abilityDescription: 
-    initialCooldown: 0
-    activeList: []
+    abilityName: Move and Shoot
+    abilityDescription: Gain move speed and can shoot while moving for 5 seconds.
+    initialCooldown: 3
+    activeList:
+    - {fileID: 11400000, guid: 7d83e13609f92c84d91351f4238b2763, type: 2}
   passiveMain:
     abilityIcon: {fileID: 0}
-    abilityName: 
-    abilityDescription: 
+    abilityName: Attack Speed per kill
+    abilityDescription: Gain attack speed per kill stacking to a cap.
     initialCooldown: 0
-    passiveList: []
+    passiveList:
+    - {fileID: 11400000, guid: 040f96f7f547af74ba46562061aeca85, type: 2}
   passiveSupport:
     abilityIcon: {fileID: 0}
     abilityName: 

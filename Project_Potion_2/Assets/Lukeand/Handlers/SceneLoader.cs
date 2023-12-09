@@ -6,9 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-
+    GameHandler handler;
     //we unload the scene.
     [SerializeField] int currentScene;
+
+    private void Awake()
+    {
+        handler = gameObject.GetComponent<GameHandler>();
+    }
+
 
     public void LoadScene(int newScene)
     {
@@ -36,10 +42,32 @@ public class SceneLoader : MonoBehaviour
         }
 
 
-        if(RaidHandler.instance != null)
+        if(newScene != 0)
         {
-            //this means that we are in th
+            //this means that we are in the in a raid scene.
+            //we tell teh raid handler to start doing its thing.            
+            RaidLocalHandler raidLocal = RaidLocalHandler.instance;
+
+            //we pass the chestlist around and the new champs.
+            GameHandler.instance.raid.CallLocalHandler();
+
+            if(raidLocal != null) 
+            {
+                handler.playerHandler.gameObject.SetActive(false);
+                while (!raidLocal.isReady)
+                {
+                    yield return new WaitForSeconds(0.01f);
+                }
+            
+            }
+
+
         }
+        else
+        {
+            handler.playerHandler.gameObject.SetActive(true);
+        }
+        
     }
 
 }

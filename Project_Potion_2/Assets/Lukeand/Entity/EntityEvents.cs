@@ -11,7 +11,11 @@ public class EntityEvents : MonoBehaviour
 
 
     public event Action<EntityHandler> EventKillEnemy;
-    public void OnKillEnemy( EntityHandler attacked) => EventKillEnemy?.Invoke(attacked);
+    public void OnKillEnemy( EntityHandler attacked)
+    {
+        Debug.Log("triggered");
+        EventKillEnemy?.Invoke(attacked);
+    }
 
 
 }

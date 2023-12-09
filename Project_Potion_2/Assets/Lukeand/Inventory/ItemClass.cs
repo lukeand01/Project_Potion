@@ -9,6 +9,13 @@ public class ItemClass
     public ItemData data;
     public int quantity;
     [SerializeField]public int listIndex;
+    [HideInInspector] public RaidInventoryType raidinventoryType {  get; private set; } 
+
+    public void SetRaidInventoryType(RaidInventoryType raidinventoryType)
+    {
+        this.raidinventoryType = raidinventoryType;
+    }
+
 
     public ItemClass(ItemData data, int quantity, int listIndex)
     {

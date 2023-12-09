@@ -12,6 +12,7 @@ public class CraftHandler : MonoBehaviour
 
     private void Start()
     {
+        return;
         foreach (var item in allIngredientList)
         {
             dictionaryCraftDividedByIngredient.Add(item, AllCraftPossibleWithIngredient(item));

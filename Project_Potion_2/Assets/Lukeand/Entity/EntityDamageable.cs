@@ -56,7 +56,13 @@ public class EntityDamageable : MonoBehaviour
 
     void Die(EntityHandler attacker)
     {
-        if (attacker.ttEvents != null) attacker.ttEvents.OnKillEnemy(handler);
+
+        if (attacker.ttEvents != null)
+        {
+
+            attacker.ttEvents.OnKillEnemy(handler);
+        }
+        
         Destroy(gameObject);
     }
 

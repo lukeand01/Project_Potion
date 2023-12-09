@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc118a10e1e4e640b77ca3591454379, type: 3}
+  m_Name: CraftSpeed
+  m_EditorClassIdentifier: 
+  potionResult:
+    data: {fileID: 11400000, guid: 96da7aed2105c814a870396deeb22545, type: 2}
+    quantity: 1
+  ingredientList:
+  - data: {fileID: 11400000, guid: 5acf657f7e88103409397d87c5400d76, type: 2}
+    quantity: 1
+  - data: {fileID: 11400000, guid: 924a04eb0f21db84aa0fe087f5523685, type: 2}
+    quantity: 2
+  timeToComplete:
+    hours: 1
+    minutes: 0
+    seconds: 0

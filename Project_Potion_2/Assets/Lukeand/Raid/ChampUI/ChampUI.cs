@@ -67,6 +67,10 @@ public class ChampUI : MonoBehaviour
     [SerializeField] ChampSkillUnit[] selectSkills;
     ChampClass currentChamp;
     List<TextMeshProUGUI> statTextList = new();
+    [Separator("UPGRADE")]
+    [SerializeField] GameObject upgradeButton;
+    [SerializeField] TextMeshProUGUI haveCopiesText;
+    [SerializeField] TextMeshProUGUI requiredCopiesText;
 
     public void SetUpSelect()
     {
@@ -91,8 +95,15 @@ public class ChampUI : MonoBehaviour
 
         currentChamp = newChamp;
 
+        selectHolder.SetActive(true);
+
         selectNameText.text = currentChamp.data.champName;
         selectPortrait.sprite = currentChamp.data.champSprite;
+
+        upgradeButton.SetActive(currentChamp.HasEnoughCopies() && currentChamp.IsMaxLevel());
+
+        
+
 
         CreateStatUI();
         CreateAbilityUI();
@@ -124,6 +135,20 @@ public class ChampUI : MonoBehaviour
         currentChamp = null;
         selectHolder.SetActive(false);
     }
+
+
+    public void UpgradeCurrentChamp()
+    {
+        //1 - has current selected.
+        //2 - current cchamp is at max level
+        //3 - current cchamp has enough copies for the ccurrent level.
+
+        if (currentChamp == null) return;
+
+
+
+    }
+
     #endregion
 
     #region DESCRIPTION
@@ -138,6 +163,8 @@ public class ChampUI : MonoBehaviour
     }
 
     #endregion
+
+    
 
 }
 

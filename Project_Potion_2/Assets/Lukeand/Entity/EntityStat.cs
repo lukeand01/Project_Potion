@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using static UnityEditor.Progress;
 
+
 public class EntityStat : MonoBehaviour
 {
     //this will hold all stat informations
@@ -18,19 +19,15 @@ public class EntityStat : MonoBehaviour
     public List<BDClass> tempList = new();
     public List<BDClass> permaList = new();
     public List<BDClass> tickList = new();
-
+    Dictionary<string, BDClass> dictionaryForStacking = new Dictionary<string, BDClass>();
 
     //and now we want a list of values 
-    List<StatType> refList = new();
 
-    List<StatClass> baseStatList = new();
+    List<StatClass> initialStatList = new();
     Dictionary<StatType, float> currentStatDictionary = new();
 
 
-    private void Awake()
-    {
-        CreateRefList();
-    }
+    
     private void FixedUpdate()
     {
         ProgressTemp();
@@ -61,18 +58,25 @@ public class EntityStat : MonoBehaviour
     }
 
 
-    public void SetUp(List<StatClass> originalStatList)
+    public void SetUp(List<StatClass> currentStatList)
     {
-        foreach (var item in refList)
+        //we give this from the champclass;
+
+        //1 - we first set this new list as a local list
+        //2 - we set up the currenstatlist with these values. the dictionary will be the thing being affected by buffs or debuffs.        
+
+        foreach (var item in currentStatList)
         {
-            currentStatDictionary.Add(item, 0);
+            initialStatList.Add(new StatClass(item.stat, item.value));
         }
 
-        foreach (var item in originalStatList)
+        foreach (var item in initialStatList)
         {
-            baseStatList.Add(new StatClass(item.stat, item.value));
-            currentStatDictionary[item.stat] += item.value;
+            currentStatDictionary.Add(item.stat, item.value);
         }
+
+
+
     }
 
     //when a stat bd is added or removed we take that value and store.
@@ -82,38 +86,35 @@ public class EntityStat : MonoBehaviour
         currentStatDictionary[stat] += value;
     }
 
-    void CreateRefList()
-    {      
-        refList = new()
-        {
-            StatType.Health,
-            StatType.Armor,
-            StatType.MoveSpeed,
-            StatType.Damage,
-            StatType.AutoAttackCooldown,
-            StatType.AbilityCooldown,
-        };
-    }
+    
 
     public void AddBD(BDClass bd)
     {
         if(bd.bdType == BDType.Stat)
         {
-            float currenStat = bd.GetStrenghtForStatChange(currentStatDictionary[bd.statType]);
+            float currenStat = bd.GetValueBasedInCurrentValue(currentStatDictionary[bd.statType]);
             ChangeStat(bd.statType, currenStat);
         }
 
-
+        if (bd.IsStackable())
+        {
+            dictionaryForStacking.Add(bd.id, bd);
+        }
 
         if (bd.IsTick())
         {
-            
+            tickList.Add(bd);
+            return;
         }
 
         if (bd.IsTemp())
         {
-
+            
+            tempList.Add(bd);
+            return;
         }
+
+        permaList.Add(bd);
 
         //then here we do the stuff.
     }
@@ -128,86 +129,36 @@ public class EntityStat : MonoBehaviour
         }
 
 
+        if (dictionaryForStacking.ContainsKey(bd.id))
+        {
+            dictionaryForStacking.Remove(bd.id);
+        }
+
         targetList.RemoveAt(index);
 
+        
     }
-    public void AddBDWithID(BDClass bd, string id)
-    {       
-        if (bd.IsTick())
+    public void AddBDWithID(BDClass bd)
+    {
+
+       
+
+
+        if (dictionaryForStacking.ContainsKey(bd.id))
         {
-            foreach (var item in tickList)
-            {
-                if (item.IsSameID(id))
-                {
-                    //if we find it and it is stat.
-                    
-                    if (item.bdType == BDType.Stat)
-                    {
-                        //then we will remove it and add back with the new value.
-                        ChangeStat(item.statType, item.GetLastValueToRemove());
-                        item.Stack(bd);
-                        float currenStat = bd.GetStrenghtForStatChange(currentStatDictionary[bd.statType]);
-                        ChangeStat(item.statType, item.GetStrenghtForStatChange(currenStat));
-                    }
-                    else
-                    {
-                        item.Stack(bd);
-                    }
-                    return;
-                }
-            }
-
-
-            return;
+            BDClass bdToStack = dictionaryForStacking[bd.id];
+            ChangeStat(bdToStack.statType, bdToStack.GetLastValueToRemove());
+            bdToStack.Stack(bd);
+            float currenStat = bd.GetValueBasedInCurrentValue(currentStatDictionary[bd.statType]);
+            ChangeStat(bdToStack.statType, bdToStack.GetValueBasedInCurrentValue(currenStat));
+        }
+        else
+        {
+            AddBD(bd);
         }
 
-        if (bd.IsTemp())
-        {
-            foreach (var item in tempList)
-            {
-                if (item.IsSameID(id))
-                {
-                    //if we find it and it is stat.
+        
 
-                    if (item.bdType == BDType.Stat)
-                    {
-                        //then we will remove it and add back with the new value.
-                        ChangeStat(item.statType, item.GetLastValueToRemove());
-                        item.Stack(bd);
-                        float currenStat = bd.GetStrenghtForStatChange(currentStatDictionary[bd.statType]);
-                        ChangeStat(item.statType, item.GetStrenghtForStatChange(currenStat));
-                    }
-                    else
-                    {
-                        item.Stack(bd);
-                    }
-                    return;
-                }
-            }
-            return;
-        }
-
-        foreach (var item in permaList)
-        {
-            if (item.IsSameID(id))
-            {
-                //if we find it and it is stat.
-
-                if (item.bdType == BDType.Stat)
-                {
-                    //then we will remove it and add back with the new value.
-                    ChangeStat(item.statType, item.GetLastValueToRemove());
-                    item.Stack(bd);
-                    float currenStat = bd.GetStrenghtForStatChange(currentStatDictionary[bd.statType]);
-                    ChangeStat(item.statType, item.GetStrenghtForStatChange(currenStat));
-                }
-                else
-                {
-                    item.Stack(bd);
-                }
-                return;
-            }
-        }
 
     }
 
@@ -218,9 +169,32 @@ public class EntityStat : MonoBehaviour
         return currentStatDictionary[statType];
     }
 
+    //i dont want to be checking lists everytime but maybe we can jsut do that for now.
+    public bool HasBDBoolean(BDBooleanType boolType)
+    {
+        foreach (var item in tempList)
+        {
+            if(item.bdType == BDType.Boolean)
+            {
+                if (item.booleanType == boolType) return true;
+            }
+        }
+
+        foreach (var item in permaList)
+        {
+            if (item.bdType == BDType.Boolean)
+            {
+                if (item.booleanType == boolType) return true;
+            }
+        }
+
+        return false;
+    }
 }
-//thosee are all posibles stats.
+
 //
+
+
 
 [System.Serializable]
 public class StatClass

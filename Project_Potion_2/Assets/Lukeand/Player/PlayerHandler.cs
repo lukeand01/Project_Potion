@@ -28,7 +28,7 @@ public class PlayerHandler : MonoBehaviour
     public InputButton interactButton;
     public InputButton interactSecondButton;
 
-
+    BlockClass block;
 
 
     #region MONEY
@@ -73,9 +73,7 @@ public class PlayerHandler : MonoBehaviour
         interactButton.EventReleased += InputRelease;
         interactSecondButton.EventPressed += InputSecondInteract;
 
-
-
-
+      
     }
 
     private void OnDestroy()
@@ -239,6 +237,13 @@ public class PlayerHandler : MonoBehaviour
 
     #endregion
 
+
+
+    #region ONRAID
+    //it cannot be controlled or affect when in raid.
+    
+
+    #endregion
 
 }
 

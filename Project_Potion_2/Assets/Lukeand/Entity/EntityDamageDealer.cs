@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class EntityDamageDealer : MonoBehaviour
 {
-    EntityHandler handler;
+    EntityHandler attacker;
     int amountOfCollisionsAllowed = 1;
     int currentAmountOfCollisionAllowed = 0;
 
@@ -17,14 +17,11 @@ public class EntityDamageDealer : MonoBehaviour
     //we set up special effect.
     //apply stats.
     //deal damage.
-    public void SetUp(DamageClass damage)
+    public void SetUp(EntityHandler attacker, DamageClass damage)
     {
         this.damage = new DamageClass(damage.baseDamage);
-        handler = GetComponent<EntityHandler>();
-        if(handler == null )
-        {
-            handler = gameObject.AddComponent<EntityHandler>();
-        }
+        this.attacker = attacker;
+        
 
 
     }
@@ -65,6 +62,7 @@ public class EntityDamageDealer : MonoBehaviour
         }
 
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
@@ -79,7 +77,6 @@ public class EntityDamageDealer : MonoBehaviour
             if (currentAmountOfCollisionAllowed >= amountOfCollisionsAllowed)
             {
                 Destroy(gameObject);
-                Debug.Log(amountOfCollisionsAllowed + " " + currentAmountOfCollisionAllowed);
             }
         }
 
@@ -143,7 +140,7 @@ public class EntityDamageDealer : MonoBehaviour
             return;
         }
 
-        damageable.TakeDamage(handler, damage);
+        damageable.TakeDamage(attacker, damage);
 
         
     }

@@ -169,17 +169,50 @@
 //the raid ui is not that good. slow for some reason fix that.
 
 
-//TOMORROW GOAL
-//create two skills.
-//create the ui effect when an entity is damaged.
-//create one passive.
-//create two recipes.
+//GOAL 
+//an start the raid
 
+//STARTING THE RAID
+//
+
+
+//GOAL 
+//can end the raid
+
+
+
+//GOAL FOR TOMORROW AND AFTER
+//can start the raid and load with teh selected champs. drag them into it.
+//can grab itens
+//can simulate ending the raid with just a button.
+//the champ shows the exp gained.
+//show the itens (no need to organizing). but do a quick animation for each.
+//there is a problem about the camera and the two players.
+//result -> champ -> inventory -> buttons (all should take less than 15 seconds)
+
+//TASKS 1
+///fix the champ ui
+//upgrade the champ by spending copies.
+//get chests and itens for raid that are taken to the store
+//create ui for inventory in raid.
+//create system for ending raid and returning to store.
+
+
+
+//TASKS 2
+//finish the loop of itens (farm, raid, production, selling)
+//create the system for the npc
+//finish the system for placing the craft and getting stuff done (ui and results)
+
+//TASKS 3
+//Create the system for the support champ.
+//fix that the targetting should always priority people closer.
+//
 
 
 
 //TOTAL GOAL 
-//3 months of development (16/11/23 - 16/2/23)
+//3 months of development (16/11/23 - 16/2/23) - about more 90 days of dev now.
 //money goal: 3.000 dolar over a year. (low goal)
 //
 
@@ -196,3 +229,31 @@
 //Evil project
 //Doom project
 //
+
+
+
+//THINGS TO FIX FOR IMPROVEMENT SAKE
+//i dont want to check every list to find the bdbooleans.
+//i dont want to contisounly check the value for movespeed.
+
+
+
+//Create Potion
+//
+//INGREDIENTS
+//apple - these two are the first basic things you can grow
+//banana - 
+//Coffe - 
+//Fairy dust - 
+//Skeleton bones
+//dragon feather
+//Slime Eye
+//
+//POTIONS (Drink, Medicinal, Enhancing)
+//Refreshment Potion (apple, apple, apple)
+//Refreshment potion 2 (apple, apple, banana)
+//Sleep Potion (Apple, apple, FairyDust)
+//Speed Potion (Apply, Coffee, FairyDust)
+//Strenght Potion (Apple, Skeleton Bone, Skeleton Bone)
+//Fire Resistance Potion (Apple, Apple, Dragon Feather)
+//Healing Potion (Apple, Apple, SlimeEyes)
