@@ -21,15 +21,17 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(LoadSceneProcess(newScene));
     }
 
+    int brake = 0;
+
     IEnumerator LoadSceneProcess(int newScene)
     {
 
         //bring the black screen.
+        //i can load an empty scene
 
+        AsyncOperation emptyAsync = SceneManager.LoadSceneAsync(0, LoadSceneMode.Additive);
 
-        AsyncOperation loadAsync = SceneManager.LoadSceneAsync(newScene, LoadSceneMode.Additive);
-
-        while (!loadAsync.isDone)
+        while (!emptyAsync.isDone)
         {
             yield return new WaitForSeconds(0.01f);
         }
@@ -40,6 +42,34 @@ public class SceneLoader : MonoBehaviour
         {
             yield return new WaitForSeconds(0.01f);
         }
+
+        AsyncOperation loadAsync = SceneManager.LoadSceneAsync(newScene, LoadSceneMode.Additive);
+
+        while (!loadAsync.isDone)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+
+        AsyncOperation emptyRemoveAsync = SceneManager.UnloadSceneAsync(0);
+
+        while (!emptyRemoveAsync.isDone)
+        {
+            yield return new WaitForSeconds(0.01f);
+        }
+
+
+
+        while (UIHolder.instance == null)
+        {
+            brake ++;   
+            if(brake > 1000)
+            {
+                Debug.Log("brake this");
+                yield break;
+            }
+            yield return new WaitForSeconds(0.01f);
+        }
+
 
 
         if(newScene != 0)

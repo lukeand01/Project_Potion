@@ -502,7 +502,7 @@ public class NPCBase : Tree, IInteractable, IInventory
         float x = index % 2 == 0 ? 0 : -0.1f;
         float y = (index * 0.15f) + 0.15f;
 
-        Debug.Log("valus " + x + " " + y);
+
         return new Vector2(x, y);
     }
     #endregion

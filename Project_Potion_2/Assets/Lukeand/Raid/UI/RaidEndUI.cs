@@ -30,9 +30,6 @@ public class RaidEndUI : MonoBehaviour
     [SerializeField] Transform inventoryContainer;
 
 
-    [Separator("VALUES BEING STORED")]
-    List<ChampClass> champList = new();
-    List<ItemClass> itemList = new();
 
 
     private void Awake()
@@ -60,7 +57,12 @@ public class RaidEndUI : MonoBehaviour
 
     //in reality the experience has already worked in pchandler.
 
-    public void StartVictory(RaidScoreType raidScore)
+
+    //we will send a copy of the champ and the xp gained.
+    //but also the ui will be the thing to decide what item will be added by the player.
+
+
+    public void StartVictory(List<ChampClass> copyChampList, float totalExperienceGained, RaidScoreType raidScore)
     {
         //we show all the iten gathered.
 
@@ -68,6 +70,11 @@ public class RaidEndUI : MonoBehaviour
         //then we show the champ 
         //then we show the itens
         //one after another very quicckly.
+
+
+
+
+
         GetScore(raidScore);
         GetRaidInventoryList();
         GetChamps();

@@ -19,8 +19,8 @@ public class RaidHandler : MonoBehaviour
 
     //we give the information of waht has been chosen
     public RaidStageData currentStageData { get; private set; }
-    List<ChampClass> champList = new();
-     List<ItemClass> chestList = new();  
+    public List<ChampClass> champList = new();
+    public List<ItemClass> chestList = new();  
 
 
     [Separator("DEBUGGING STUFF")]
@@ -36,9 +36,9 @@ public class RaidHandler : MonoBehaviour
     {
         List<ChampClass> debugChampList = new();
 
-        foreach (var item in debugDataChampList)
+        foreach (var champ in debugDataChampList)
         {
-            debugChampList.Add(new ChampClass(item));
+            debugChampList.Add(new ChampClass(champ));
         }
 
         StartNewRaid(debugStageData, debugChampList);
@@ -53,15 +53,19 @@ public class RaidHandler : MonoBehaviour
 
         if(PlayerHandler.instance != null)
         {
-            Debug.Log("found something here");
+
 
             PlayerHandler.instance.gameObject.SetActive(false);
         }
 
 
+
         currentStageData = stageData;
         this.champList = champList; 
         this.chestList = handler.playerHandler.inventory.chestList; 
+
+        
+
         GameHandler.instance.loader.LoadScene(stageData.stageID);
         
     }
@@ -81,19 +85,32 @@ public class RaidHandler : MonoBehaviour
     }
 
 
-
-    public void EndRaid(List<ChampClass> champList, List<ItemClass> newItens, int newGoldValue)
+    public void WonRaid()
     {
-        //this must be given to the playerhabndler only once its turned on.
-        //the inventory will be completely updated. as thats not a problem
-        //the champ is a bhit more complex. i will get the used champ and exchange the especifc parts based in teh champdata
+        //1 - send the information that will simulating it being delivery.
+        //2 - then we do the actual process here
+        //3 - then we send the information to the player
 
+        //xp is based in stage level and perfomance.
 
+        
 
-
-        GameHandler.instance.loader.LoadScene(0);
 
     }
+    public void LostRaid()
+    {
+        //the same thing as victory but there will be less.
+    }
+
+
+
+    public void EndRaid()
+    {
+        //this is callled.
+        //bnow we need to tell if we won or not.
+
+    }
+
 
 
 

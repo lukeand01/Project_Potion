@@ -42,6 +42,9 @@ public class GameHandler : MonoBehaviour
         npc = GetComponent<NPCHandler>();
         craft = GetComponent<CraftHandler>();
         raid = GetComponent<RaidHandler>(); 
+        loader = GetComponent<SceneLoader>();
+
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()

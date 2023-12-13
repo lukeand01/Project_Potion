@@ -210,6 +210,25 @@ public class ChampClass
     public void GainExperience(float value)
     {
 
+        float currentValue = value;
+        int brake = 0;
+
+        while(currentValue > 0 && !IsMaxLevel())
+        {
+            brake++;
+
+            if(brake > 1000)
+            {
+                Debug.Log("had to brakelevel in uppping char " + data.champName);
+                break;
+            }
+
+
+           
+        }
+
+
+
     }
 
     public bool IsMaxLevel()

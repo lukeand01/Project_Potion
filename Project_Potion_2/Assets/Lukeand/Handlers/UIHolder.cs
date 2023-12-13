@@ -17,10 +17,31 @@ public class UIHolder : MonoBehaviour
     public RaidInventoryUI raidInventory;
     public GameObject raidUtilityButtonsHolder;
     public RaidEndUI raidEnd;
+
+    [Separator("RAID BUTTON")]
+    public AbilityButton skill1Button;
+    public AbilityButton skill2Button;
+    public FloatingJoystick joystick;
+
+
     private void Awake()
     {
         if (instance == null) instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Debug.Log("called this");
+
+        }
+    }
+
+    private void ReDoInstanceCheck()
+    {
+        if (instance == null) instance = this;
+        else
+        {
+            Debug.Log("called this");
+            Destroy(gameObject);
+        }
     }
 
     public void OpenRaidMenu()

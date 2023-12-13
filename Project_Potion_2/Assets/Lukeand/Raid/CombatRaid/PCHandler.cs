@@ -26,11 +26,11 @@ public class PCHandler : MonoBehaviour
     [HideInInspector] public Rigidbody2D rb;
 
     [Separator("INPUT")]
-    public FloatingJoystick joystick;
+      FloatingJoystick joystick;
     public InputButton interactButton;
     public InputButton interactSecondButton;
-    [SerializeField] AbilityButton skill1Button;
-    [SerializeField] AbilityButton skill2Button;
+    AbilityButton skill1Button;
+    AbilityButton skill2Button;
 
     [Separator("ALLY")]
     public List<AllyCombatHandler> allyChampList = new();
@@ -66,9 +66,12 @@ public class PCHandler : MonoBehaviour
 
         controller = GetComponent<PlayerController>();
         entityHandler = GetComponent<EntityHandler>();
-        
-        
-        if(DEBUGstartChampData != null)
+
+        //i need to set up the ability button and joystick.
+
+
+
+        if (DEBUGstartChampData != null)
         {
             SetUp(new ChampClass(DEBUGstartChampData));
         }    
@@ -118,9 +121,16 @@ public class PCHandler : MonoBehaviour
     {
         champ = mainChamp;
 
-        
-        
-        SetUpAbilities();
+        if(UIHolder.instance == null) 
+        {
+            Debug.Log("there was no ui instance");
+        }
+
+        skill1Button = UIHolder.instance.skill1Button;
+        skill2Button = UIHolder.instance.skill2Button;
+        joystick = UIHolder.instance.joystick;
+
+       
 
         if(entityHandler != null)
         {
@@ -135,7 +145,9 @@ public class PCHandler : MonoBehaviour
             }
         }
 
+        //we also need to put the entityhandler in the skills.
 
+        SetUpAbilities();
     }
 
     public void SetAllies(List<AllyCombatHandler> allyList)
@@ -146,8 +158,13 @@ public class PCHandler : MonoBehaviour
 
     void SetUpAbilities()
     {
-        champ.autoAttack.SetUp(entityHandler, AbilityType.AutoAttack);
 
+        if(entityHandler == null)
+        {
+            entityHandler = GetComponent<EntityHandler>();
+        }
+
+        champ.autoAttack.SetUp(entityHandler, AbilityType.AutoAttack);
         champ.skill1.SetUp(entityHandler, AbilityType.Skill1);
         champ.skill1.SetUpUnit(skill1Button);
         champ.skill2.SetUp(entityHandler, AbilityType.Skill2);

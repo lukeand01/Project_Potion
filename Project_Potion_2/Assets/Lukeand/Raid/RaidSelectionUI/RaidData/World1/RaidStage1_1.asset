@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f246360cb1a10944b1dab79a92c3f81, type: 3}
   m_Name: RaidStage1_1
   m_EditorClassIdentifier: 
-  stageID: 0
+  stageID: 2
   moneyForCompletion: 0
   diamondForCompletion: 0
   itemChanceClasses:
@@ -21,4 +21,4 @@ MonoBehaviour:
   - data: {fileID: 11400000, guid: 924a04eb0f21db84aa0fe087f5523685, type: 2}
     chance: 35
   enemyGroupClass:
-  - enemyQuantityList: []
+  - enemyList: []

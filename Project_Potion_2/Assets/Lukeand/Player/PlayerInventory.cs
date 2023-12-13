@@ -379,8 +379,9 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
         if (handList.Count == 0) return -1;
 
-        for (int i = handList.Count; i > -1; i--)
+        for (int i = handList.Count; i > 0; i--)
         {
+
             if (handList[i - 1].data.itemType == type)
             {
                 return i - 1;

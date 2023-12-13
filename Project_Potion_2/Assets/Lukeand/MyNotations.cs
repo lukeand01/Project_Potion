@@ -63,6 +63,10 @@
 //CHAR UPGRADES
 //
 
+//IDEAS
+//Plant that you need to interact everyday to make it grow.
+//
+
 
 
 //FIRST
@@ -179,7 +183,8 @@
 //GOAL 
 //can end the raid
 
-
+//FIX 
+///for some reason the itens in hand are appearing somewhere else.
 
 //GOAL FOR TOMORROW AND AFTER
 //can start the raid and load with teh selected champs. drag them into it.

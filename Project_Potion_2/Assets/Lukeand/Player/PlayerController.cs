@@ -11,24 +11,32 @@ public class PlayerController : MonoBehaviour
     public void OnMoveInput() => EventMoveInput?.Invoke();
 
     PlayerHandler handler;
+    PCHandler combatHandler;
     PlayerMove move;
 
-    [SerializeField] FloatingJoystick joystick;
+    FloatingJoystick joystick;
     InputButton interactButton;
     //we set up them.
 
     private void Awake()
     {
         handler = GetComponent<PlayerHandler>();
+        combatHandler = GetComponent<PCHandler>();
         move = GetComponent<PlayerMove>();
-        //joystick = handler.joystick;
-        //interactButton = handler.interactButton;
+
+
+        if(handler != null)
+        {
+            joystick = handler.joystick;
+            interactButton = handler.interactButton;
+        }
+        
 
     }
 
     private void Start()
     {
-        
+        joystick = UIHolder.instance.joystick;
     }
 
 
@@ -48,13 +56,21 @@ public class PlayerController : MonoBehaviour
             OnMoveInput();
         }
 
-        if (joystick == null) Debug.Log("no joystick");
+        if (joystick == null)
+        {           
+            return;
+        }
 
         move.Move(joystick.Direction);
     }
 
     public bool IsMoving()
     {
+        if(joystick == null)
+        {
+
+            return false;
+        }
         if (joystick.Direction.x == 0 && joystick.Direction.y == 0) return false;
         return true;
     }

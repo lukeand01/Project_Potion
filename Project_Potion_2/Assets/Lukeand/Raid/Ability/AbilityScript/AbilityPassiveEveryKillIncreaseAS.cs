@@ -8,6 +8,12 @@ public class AbilityPassiveEveryKillIncreaseAS : AbilityPassiveData
     public override void Add(AbilityClass ability)
     {
         //i should be able to call the abilityclass in the passive as well.
+
+        if(ability.entityHandler == null)
+        {
+            Debug.Log("this was the problem");
+        }
+
         ability.entityHandler.ttEvents.EventKillEnemy += (handler) => CallPassive(ability, handler);
 
     }
