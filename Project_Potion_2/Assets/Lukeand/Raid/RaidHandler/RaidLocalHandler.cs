@@ -27,7 +27,7 @@ public class RaidLocalHandler : MonoBehaviour
     [SerializeField] Transform playerPos;
     [SerializeField] Transform[] chestSpots;
     [SerializeField] Transform[] enemyGroupSpots;
-
+    
 
     public void GenerateRaid(ChampClass mainChamp, List<ChampClass> allyList, RaidStageData stageData)
     {
@@ -80,5 +80,18 @@ public class RaidLocalHandler : MonoBehaviour
 
     }
 
+
+    //this will be responsivel for grading the score as well.
+
+
+    public void DebugWin()
+    {
+        GameHandler.instance.raid.WonRaid();
+    }
+
+    public RaidScoreType GetRaidScore()
+    {
+        return RaidScoreType.S;
+    }
 }
 

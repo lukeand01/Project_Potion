@@ -2,7 +2,9 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RaidEndUI : MonoBehaviour
 {
@@ -17,13 +19,17 @@ public class RaidEndUI : MonoBehaviour
     GameObject holder;
 
     [Separator("SCORE")]
+    [SerializeField] GameObject scoreHolder;
+    [SerializeField] Image scoreBackground;
     [SerializeField] TextMeshProUGUI scoreText;
+    Vector3 scoreTextOriginalPos;
     float scoreModifier;
 
 
     [Separator("CHAMP")]
     [SerializeField] RaidChampEndUnit champEndTemplate;
     [SerializeField] Transform[] champPos;
+    List<RaidChampEndUnit> raidChampUnitList = new();
 
     [Separator("INVENTORY")]
     [SerializeField] RaidEndInventoryUnit raidEndInventoryTemplate;
@@ -35,6 +41,7 @@ public class RaidEndUI : MonoBehaviour
     private void Awake()
     {
         holder = transform.GetChild(0).gameObject;
+        scoreTextOriginalPos = scoreText.transform.position;
     }
 
     public void Open()
@@ -47,85 +54,87 @@ public class RaidEndUI : MonoBehaviour
         holder?.SetActive(false);   
     }
 
-    public void StartDefeat()
+    public void StartDefeat(List<ChampClass> copyChampList, float totalExperienceGained, RaidScoreType raidScore)
     {
-        //no itens gathered just a bit of experiene
-        
-
+        ReadyScore(raidScore);
+        ReadyEmptyInventoryList();
+        ReadyChamps(totalExperienceGained);
+        StartCoroutine(DisplayProcess());
     }
-
-
-    //in reality the experience has already worked in pchandler.
-
-
-    //we will send a copy of the champ and the xp gained.
-    //but also the ui will be the thing to decide what item will be added by the player.
 
 
     public void StartVictory(List<ChampClass> copyChampList, float totalExperienceGained, RaidScoreType raidScore)
     {
-        //we show all the iten gathered.
+        Debug.Log("start victory");
 
-        //first we show the results.
-        //then we show the champ 
-        //then we show the itens
-        //one after another very quicckly.
+        //we set all those things but we make them invisible to show one by one.
 
 
+        ReadyScore(raidScore);
+        ReadyChamps(totalExperienceGained);
+        //GetRaidInventoryList();
 
-
-
-        GetScore(raidScore);
-        GetRaidInventoryList();
-        GetChamps();
-        StartCoroutine(VictoryProcess());   
+        StartCoroutine(DisplayProcess());   
     }
 
     List<RaidEndInventoryUnit> raidInventoryList = new();
 
-    void GetScore(RaidScoreType raidScore)
-    {
-      
+
+    void ReadyScore(RaidScoreType raidScore)
+    {    
         scoreModifier = (float)raidScore * 0.01f;
-        Debug.Log("the scccore modifier " + scoreModifier);
+        Debug.Log("the score modifier " + scoreModifier);
         scoreText.text = raidScore.ToString();
+
+        scoreHolder.SetActive(false);
+        scoreText.gameObject.SetActive(false);
     }
 
-    void GetRaidInventoryList()
+
+    //we add all the itens in the inventopry of pchandler.
+    //we check who can be added and who cannot
+
+    void ReadyRaidInventoryList()
     {
-       List<ItemClass> newList = PlayerHandler.instance.inventory.GetListForRaidInventoryBasedInChestInventory(PCHandler.instance.inventory.raidList);
+        //here we get
 
-        raidInventoryList.Clear();
+        //we check this fella here to tell 
+        //this is jsut for show.
 
-        foreach (var item in newList)
-        {
-            RaidEndInventoryUnit newObject = Instantiate(raidEndInventoryTemplate, Vector2.zero, Quaternion.identity);
-            newObject.SetUp(item, item.raidinventoryType);
-            newObject.transform.parent = inventoryContainer;
-            newObject.Hide();
-            raidInventoryList.Add(newObject);
-        }
+
+
+
+
+
 
     }
 
-    void GetChamps()
+    void ReadyEmptyInventoryList()
+    {
+
+    }
+
+    void ReadyChamps(float totalExpGained)
     {
         //get the 
         PCHandler handler = PCHandler.instance;
-
+        raidChampUnitList.Clear();
         RaidChampEndUnit newObject = Instantiate(champEndTemplate, Vector2.zero, Quaternion.identity);
-        newObject.SetUp(new ChampClass(handler.champ),  handler.raidGainedExperiene, scoreModifier ,  true);
+        newObject.SetUp(new ChampClass(handler.champ),  totalExpGained, scoreModifier ,  true);
         newObject.Hide();
         List<ChampClass> allyList = handler.GetAllies();
+
+        
+        raidChampUnitList.Add(newObject);
 
         for (int i = 0; i < allyList.Count; i++)
         {
             RaidChampEndUnit secondObject = Instantiate(champEndTemplate, Vector2.zero, Quaternion.identity);
-            secondObject.SetUp(allyList[i], handler.raidGainedExperiene / 3, scoreModifier,  false);
+            secondObject.SetUp(allyList[i], totalExpGained / 3, scoreModifier,  false);
             secondObject.transform.parent = transform;
             secondObject.transform.position = champPos[i + 1].transform.position;
             secondObject.Hide();
-
+            raidChampUnitList.Add(secondObject);
         }
 
 
@@ -134,21 +143,67 @@ public class RaidEndUI : MonoBehaviour
 
 
 
-    IEnumerator VictoryProcess()
+    IEnumerator DisplayProcess()
     {
+        holder.SetActive(true); 
        yield return StartCoroutine(ChampProcess());
        yield return StartCoroutine(ResultProcess());
        yield return StartCoroutine(ItemsProcess());
 
-        Debug.Log("end of process");
-    }
 
+    }
+    
     IEnumerator ResultProcess()
     {
-        yield return null;
+        //bring in the background of the holder.
+        //then 
+
+        scoreHolder.SetActive(true);
+        var backgroundColor = scoreBackground.color;
+        backgroundColor.a = 0;
+        scoreBackground.color = backgroundColor;
+
+        scoreText.gameObject.SetActive(true);
+        var textColor = scoreText.color;
+        textColor.a = 0;
+        scoreText.color = textColor;
+        scoreText.transform.position = scoreTextOriginalPos;
+        scoreText.transform.localScale = Vector3.one;
+
+        while(scoreBackground.color.a < 1)
+        {
+            scoreBackground.color += new Color(0, 0, 0, 0.01f);
+            yield return new WaitForSeconds(0.005f);
+        }
+
+        //then we make the text fade in and fall into place.
+
+
+        while (scoreText.color.a < 1)
+        {
+            scoreText.color += new Color(0, 0, 0, 0.1f);
+            scoreText.transform.position -= new Vector3(0, 12f, 0);
+            yield return new WaitForSeconds(0.01f);
+        }
+
+ 
     }
     IEnumerator ChampProcess()
     {
+        Debug.Log("start champ");
+
+        //show each
+
+        foreach (var item in raidChampUnitList)
+        {
+            item.gameObject.SetActive(true);
+            item.Show();            
+            yield return new WaitForSeconds(0.2f);
+            item.ShowExperience();
+            yield return new WaitForSeconds(0.5f);
+        }
+
+
         yield return null;
     }
     IEnumerator ItemsProcess()
@@ -158,17 +213,18 @@ public class RaidEndUI : MonoBehaviour
 
     public void Confirm()
     {
-        //now we give the list 
-        //give the newlist
-        //and give the gold and diamonds we found
 
-        
-        //we get the values.
-        //
+        //we some itens and give others.
 
-
+        RaidHandler raid = GameHandler.instance.raid;
+        //raid.ReceiveNewItens();
+        raid.EndRaid();
 
     }
     
 
 }
+
+
+
+//first i will just show the grade.

@@ -9,7 +9,7 @@ public class RaidChampEndUnit : MonoBehaviour
 {
 
     //this thing here will show the 
-
+    ChampClass champ;
     [SerializeField] Image portrait;
     [SerializeField] TextMeshProUGUI nameText;
     [SerializeField] TextMeshProUGUI levelText;
@@ -23,6 +23,7 @@ public class RaidChampEndUnit : MonoBehaviour
     bool isMain;
     public void SetUp(ChampClass champ, float totalExperienceGained, float scoreModifier, bool isMain)
     {
+        this.champ = champ;
         portrait.sprite = champ.data.champSprite;
         nameText.text = champ.data.champName;
 
@@ -47,7 +48,7 @@ public class RaidChampEndUnit : MonoBehaviour
 
         this.isMain = isMain;   
         this.scoreModifier = scoreModifier;
-        StartCoroutine(ShowExperienceProcess());
+        //StartCoroutine(ShowExperienceProcess());
 
     }
 
@@ -59,14 +60,71 @@ public class RaidChampEndUnit : MonoBehaviour
     public void Show()
     {
         //show just means it increases in size.
+        
         transform.DOScale(1, 0.25f);
     }
 
     //
 
+    public void ShowExperience()
+    {
+        StartCoroutine(ShowExperienceProcess());
+    }
+
     IEnumerator ShowExperienceProcess()
     {
+        //teh experience was already stored.
+        //give the score.
+        //this champ is not real so i can do whatever i want with it.
+        //it shows the experience gained and slowly raise the experience
+
+        //float expForNextLevel = champ.exper
+
+        
+      
+        float remainingExperience = totalExperienceGained;
+        float singleLoopRemainingExp = 0;
+
+        float currentExp = champ.champCurrentExperience;
+        float totalExp = champ.champTotalExperience;
+        int level = champ.champLevel;
+
+
+        while (remainingExperience > 0 && !champ.IsMaxLevel())
+        {
+            //we keep on giving.
+            //till we either done or out ofresources.
+
+
+
+            yield return new WaitForSeconds(0.01f);
+        }
+
+
+        
+
+    }
+
+    IEnumerator IncreaseLevelProcess(int newLevel)
+    {
+        //increase 
+        levelText.text = newLevel.ToString();
+        levelText.transform.localScale = Vector3.one;
+
+        while(levelText.transform.localScale.x < 1.5f)
+        {
+            levelText.transform.localScale += new Vector3(0.01f, 0.01f, 0);
+            yield return new WaitForSeconds(0.005f);
+        }
+
+        while(levelText.transform.localScale.x > 1)
+        {
+            levelText.transform.localScale -= new Vector3(0.01f, 0.01f, 0);
+            yield return new WaitForSeconds(0.005f);
+        }
+
         yield return null;
     }
+
 
 }

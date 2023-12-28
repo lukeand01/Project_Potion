@@ -34,15 +34,15 @@ public class ItemClass
         this.listIndex = listIndex;
     }
 
-    public void ReceiveNewData(ItemData data)
+    public void ReceiveNewData(ItemData data, int value = 1)
     {
         this.data = data;
-        quantity = 1;
+        quantity = value;
         UpdateUI();
     }
-    public void IncreaseQuantity()
+    public void IncreaseQuantity(int value = 1)
     {
-        quantity += 1;
+        quantity += value;
         UpdateUI();
     }
     public void DecreaseQuantity()

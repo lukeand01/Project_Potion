@@ -15,9 +15,10 @@ public class RaidHandler : MonoBehaviour
 
     public PCHandler mainChampTemplate; //this has the pchandler
     public AllyCombatHandler allyChampTemplate; //this is for the allies.
-    
+
 
     //we give the information of waht has been chosen
+
     public RaidStageData currentStageData { get; private set; }
     public List<ChampClass> champList = new();
     public List<ItemClass> chestList = new();  
@@ -30,6 +31,17 @@ public class RaidHandler : MonoBehaviour
     private void Awake()
     {
         handler = GetComponent<GameHandler>();  
+
+        if(debugStageData != null)
+        {
+            currentStageData = debugStageData;
+        }
+
+        foreach (var item in debugDataChampList)
+        {
+            champList.Add(new ChampClass(item));
+        }
+        
     }
 
     public void StartDebugRaid()
@@ -84,29 +96,78 @@ public class RaidHandler : MonoBehaviour
 
     }
 
+    
 
     public void WonRaid()
     {
         //1 - send the information that will simulating it being delivery.
-        //2 - then we do the actual process here
+        //2 - then we do the ui process here
         //3 - then we send the information to the player
 
         //xp is based in stage level and perfomance.
 
+        RaidScoreType raidScore = RaidLocalHandler.instance.GetRaidScore();
+      
+        float totalExperienceGained = (currentStageData.experienceForCompletion * (float)raidScore) / 100;
+
+        List<ChampClass> copyList = new();
+
+        foreach (var item in champList)
+        {
+            copyList.Add(new ChampClass(item));
+        }
+
         
 
+        UIHolder.instance.raidEnd.StartVictory(copyList, totalExperienceGained, raidScore);
 
+        champList[0].GainExperience(totalExperienceGained);
+
+
+
+
+        for (int i = 1; i < champList.Count; i++)
+        {
+            champList[i].GainExperience(totalExperienceGained * 0.6f);
+        }
+        
     }
     public void LostRaid()
     {
         //the same thing as victory but there will be less.
+
+        RaidScoreType raidScore = RaidScoreType.D;
+        float totalExperienceGained = (currentStageData.experienceForCompletion * (float)raidScore) / 100;
+
+        List<ChampClass> copyList = new();
+
+        foreach (var item in champList)
+        {
+            copyList.Add(new ChampClass(item));
+        }
+
+
+        UIHolder.instance.raidEnd.StartDefeat(copyList, totalExperienceGained, raidScore);
+
+        champList[0].GainExperience(totalExperienceGained);
+        for (int i = 1; i < champList.Count; i++)
+        {
+            champList[i].GainExperience(totalExperienceGained * 0.6f);
+        }
     }
 
 
+    public void ReceiveNewItens(List<ItemClass> newItemList)
+    {
+        //this is chosen when the character clicks the button.
+        //it first gives the itens then passes the new itens.
+
+    }
 
     public void EndRaid()
     {
-        //this is callled.
+        //this is callled to load back the other scene
+        //
         //bnow we need to tell if we won or not.
 
     }
@@ -118,10 +179,7 @@ public class RaidHandler : MonoBehaviour
     //S, A, B, C, D
     //its based n how many enemies are killed, if all chests are
 
-    public RaidScoreType GetRaidScore()
-    {
-        return RaidScoreType.S;
-    }
+    
 
 }
 
@@ -130,6 +188,6 @@ public enum RaidScoreType
     S = 200,
     A = 150,
     B = 120,
-    C = 100,
-    D = 80
+    C = 80,
+    D = 40
 }

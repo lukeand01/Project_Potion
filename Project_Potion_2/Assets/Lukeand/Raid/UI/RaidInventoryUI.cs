@@ -46,6 +46,9 @@ public class RaidInventoryUI : MonoBehaviour
 
     public void UpdateUI(List<ItemClass> inventoryList)
     {
+        //wehn we update this we are going to group everyone.
+
+
         ClearUI(container);
 
         foreach (var item in inventoryList)

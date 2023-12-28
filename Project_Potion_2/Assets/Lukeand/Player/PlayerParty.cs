@@ -15,6 +15,8 @@ public class PlayerParty : MonoBehaviour
     {
         handler = GetComponent<PlayerHandler>();
         
+      
+
     }
 
     private void Start()

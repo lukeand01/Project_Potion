@@ -37,12 +37,35 @@ public class PlayerMove : MonoBehaviour
     public void Move(Vector3 dir)
     {
 
+       
+
+
+        if(dir.x != 0)
+        {
+           if(handler != null) handler.graphics.RotateSprite(GetDirFromVector(dir));
+        }
+
         if (dir.x == 0 && dir.y == 0)
         {
+            //then we are not moving and we check if we have any item in hand 
+
+            if(handler != null)
+            {
+                if (handler.inventory.HasItemInHand())
+                {
+                    handler.graphics.PlayAnimationIdleWithItem();
+                }
+                else
+                {
+                    handler.graphics.PlayAnimationIdle();
+                }
+            }
+            
 
         }
         else
         {
+           if(handler != null) handler.graphics.PlayAnimationMove();
             lastDir = dir;
             UIHolder.instance.OnMove();
         }
@@ -56,7 +79,28 @@ public class PlayerMove : MonoBehaviour
         }
 
         rb.velocity = new Vector2(dir.x, dir.y) * actualSpeed;
+        
     }
+
+
+
+
+    int GetDirFromVector(Vector2 dir)
+    {
+
+        if (dir.x > 0) return 1;
+        if (dir.x < 0) return -1;
+
+        Debug.LogError("WRONG");
+        return 0;
+
+        
+    }
+
+    //
+
+
+
 
     //might channge but it works for now.
 

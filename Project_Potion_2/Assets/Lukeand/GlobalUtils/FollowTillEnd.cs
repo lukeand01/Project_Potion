@@ -9,8 +9,8 @@ public class FollowTillEnd : MonoBehaviour
     //we have to synch. only happens when the thing is called.
 
     Transform target;
-    float speed;
-
+    protected float speed;
+    protected bool cantFollow;
     protected SpriteRenderer rend;
 
     public void SetUpBase(Transform target, float speed)
@@ -20,10 +20,15 @@ public class FollowTillEnd : MonoBehaviour
         rend = GetComponent<SpriteRenderer>();
     }
 
+    
 
     private void FixedUpdate()
     {
         if (target == null) return;
+        if (cantFollow) return;
+
+        Debug.Log("this is being called");
+
 
         if(transform.position != target.position)
         {

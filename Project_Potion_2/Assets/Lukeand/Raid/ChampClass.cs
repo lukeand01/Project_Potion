@@ -32,6 +32,7 @@ public class ChampClass
         champLevel = 1;
         champCopies = 1;
         champStar = 1;
+        champTotalExperience = Utils.GetRequiredExperience(champLevel);
         GenerateAbilities();
         CreateStatList();
     }
@@ -223,8 +224,18 @@ public class ChampClass
                 break;
             }
 
+            float experienceForNextLevel = champTotalExperience - champCurrentExperience;
+            experienceForNextLevel = Mathf.Clamp(experienceForNextLevel, 0, value);
+            currentValue -= experienceForNextLevel;
+            champCurrentExperience += experienceForNextLevel;
 
-           
+            if (champCurrentExperience >= champTotalExperience)
+            {
+                champCurrentExperience = 0;
+                champLevel += 1;
+                champTotalExperience = Utils.GetRequiredExperience(champLevel);
+                
+            }
         }
 
 

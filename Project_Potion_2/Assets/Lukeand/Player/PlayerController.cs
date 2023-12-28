@@ -30,6 +30,10 @@ public class PlayerController : MonoBehaviour
             joystick = handler.joystick;
             interactButton = handler.interactButton;
         }
+        else
+        {
+
+        }
         
 
     }
@@ -57,9 +61,16 @@ public class PlayerController : MonoBehaviour
         }
 
         if (joystick == null)
-        {           
+        {
+            Debug.Log("no joystick");
             return;
         }
+        if(move == null)
+        {
+            Debug.Log("no move");
+            return;
+        }
+
 
         move.Move(joystick.Direction);
     }

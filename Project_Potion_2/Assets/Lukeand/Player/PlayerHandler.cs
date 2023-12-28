@@ -7,18 +7,21 @@ public class PlayerHandler : MonoBehaviour
 {
     public static PlayerHandler instance;
 
-    [Separator("SCRIPTS")]
-    [HideInInspector] public PlayerController controller;
-    [HideInInspector] public PlayerMove move;
-    [HideInInspector] public PlayerInventory inventory;
-    [HideInInspector] public PlayerResource resource;
-    [HideInInspector] public PlayerParty party;
+    //SCRIPTS
+    public PlayerController controller {  get; private set; }
+    public PlayerMove move { get; private set; }
+    public PlayerInventory inventory { get; private set; }
+    public PlayerResource resource { get; private set; }
+    public PlayerParty party { get; private set; }
+    public PlayerAnimation graphics { get; private set; }
 
-    [Separator("COMPONENTS")]
-    [HideInInspector] public GameObject body;
-    [HideInInspector] public SpriteRenderer rend;
-    [HideInInspector] public Animator anim;
-    [HideInInspector] public Rigidbody2D rb;
+
+    //COMPONENTS
+    public GameObject body { get; private set; }
+    public SpriteRenderer rend { get; private set; }
+    public Animator anim { get; private set; }
+    public Rigidbody2D rb { get; private set; }
+
 
     [Separator("UI")]
     public UIHolder uiHolder;
@@ -107,6 +110,7 @@ public class PlayerHandler : MonoBehaviour
         inventory = GetComponent<PlayerInventory>();
         resource = GetComponent<PlayerResource>();
         party = GetComponent<PlayerParty>();
+        graphics = GetComponent<PlayerAnimation>();
     }
     #endregion
 

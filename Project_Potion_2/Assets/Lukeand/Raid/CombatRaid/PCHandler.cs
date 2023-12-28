@@ -44,8 +44,10 @@ public class PCHandler : MonoBehaviour
 
     [Separator("DEBUG")]
     [SerializeField] bool DEBUGcannotAutoAttack;
+    [SerializeField] ChampData currentChampData;
+    [SerializeField] float currentChampLevel;
 
-    public float raidGainedExperiene { get; private set; } //this is given to the char in the end.
+    public float raidGainedExperience { get; private set; } //this is given to the char in the end.
 
     private void Awake()
     {
@@ -63,10 +65,11 @@ public class PCHandler : MonoBehaviour
 
     private void Start()
     {
-
+        gameObject.layer = 3;
         controller = GetComponent<PlayerController>();
         entityHandler = GetComponent<EntityHandler>();
-
+        inventory = GetComponent<PlayerInventory>();
+        inventory.StartRaidInventory();
         //i need to set up the ability button and joystick.
 
 
@@ -148,6 +151,11 @@ public class PCHandler : MonoBehaviour
         //we also need to put the entityhandler in the skills.
 
         SetUpAbilities();
+
+
+        currentChampData = champ.data;
+        currentChampLevel = champ.champLevel;
+
     }
 
     public void SetAllies(List<AllyCombatHandler> allyList)
@@ -368,14 +376,14 @@ public class PCHandler : MonoBehaviour
     #region EXPERIENCE
     public void GainExperience(float value)
     {
-        raidGainedExperiene += value;
+        raidGainedExperience += value;
     }
 
     public void ReduceExperience(float value)
     {
-        raidGainedExperiene -= value;
+        raidGainedExperience -= value;
 
-        if(raidGainedExperiene < 0)
+        if(raidGainedExperience < 0)
         {
             Debug.Log("soimething went wrong");
         }
@@ -384,13 +392,13 @@ public class PCHandler : MonoBehaviour
     public float GetExperinece(float min)
     {
 
-        if(raidGainedExperiene >= min) 
+        if(raidGainedExperience >= min) 
         {
             return min;
         }
         else
         {
-            return raidGainedExperiene;
+            return raidGainedExperience;
         }
 
 

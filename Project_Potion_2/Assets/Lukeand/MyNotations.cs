@@ -187,9 +187,9 @@
 ///for some reason the itens in hand are appearing somewhere else.
 
 //GOAL FOR TOMORROW AND AFTER
-//can start the raid and load with teh selected champs. drag them into it.
-//can grab itens
-//can simulate ending the raid with just a button.
+///can start the raid and load with teh selected champs. drag them into it.
+///can grab itens
+///can simulate ending the raid with just a button.
 //the champ shows the exp gained.
 //show the itens (no need to organizing). but do a quick animation for each.
 //there is a problem about the camera and the two players.
@@ -213,6 +213,9 @@
 //Create the system for the support champ.
 //fix that the targetting should always priority people closer.
 //
+
+
+
 
 
 

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Banana
   itemDescription: A simple yellow banana
-  itemSprite: {fileID: 0}
-  stackLimit: 10
+  itemSprite: {fileID: 21300000, guid: e1ba5a4b285854f0ea9aad90395bcbc7, type: 3}
+  stackLimit: 99999
   itemType: 0
   timeForHarvest:
     hours: 0

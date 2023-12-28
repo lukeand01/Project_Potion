@@ -34,7 +34,10 @@ public class PlayerInventory : MonoBehaviour, IInventory
     [Separator("RAID")]
     int raidMoney;
     [SerializeField] public List<ItemClass> raidList = new();
-    
+
+    [Separator("SFX")]
+    [SerializeField] ParticleSystem[] psArray;
+    [SerializeField] Animator handAnimator;
 
     private void Start()
     {
@@ -45,6 +48,24 @@ public class PlayerInventory : MonoBehaviour, IInventory
         {
             AddItemToHand(new ItemClass(item, 1));
         }
+    }
+
+    private void FixedUpdate()
+    {
+
+        if(handAnimator != null)
+        {
+            bool isChoice = HasItemInHand();
+            foreach (var item in psArray)
+            {
+                item.gameObject.SetActive(isChoice);
+            }
+
+            handAnimator.enabled = isChoice;
+        }
+
+        
+
     }
 
     #region CHEST - HAND 
@@ -195,11 +216,13 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
         for (int i = 0; i < targetList.Count; i++)
         {
-            if (chestList[i].data == data && chestList[i].quantity < data.stackLimit) newList.Add(chestList[i]);
+            if (targetList[i].data == data && targetList[i].quantity < data.stackLimit) newList.Add(targetList[i]);
         }
 
         return newList;
     }
+
+
     int GetChestNextStackable(ItemData data)
     {
         for (int i = 0; i < chestList.Count; i++)
@@ -239,25 +262,28 @@ public class PlayerInventory : MonoBehaviour, IInventory
     //3 - the rest we ask if we can put it in the chest or in sell
 
 
-    public List<ItemClass> GetListForRaidInventoryBasedInChestInventory(List<ItemClass> itemList)
+    public List<ItemClass> GetListForRaidInventoryBasedInChestInventory()
     {
+        //
+
+
         List<ItemClass> newList = new();
 
-        for (int i = 0; i < itemList.Count; i++)
+        for (int i = 0; i < raidList.Count; i++)
         {
-            bool isStackable = GetChestNextStackable(itemList[i].data) != -1;
+            bool isStackable = GetChestNextStackable(raidList[i].data) != -1;
 
             if (isStackable)
             {
-                itemList[i].SetRaidInventoryType(RaidInventoryType.Stack);
-                newList.Add(itemList[i]);
-                itemList.RemoveAt(i);
+                raidList[i].SetRaidInventoryType(RaidInventoryType.Stack);
+                newList.Add(raidList[i]);
+                raidList.RemoveAt(i);
                 i--;
             }
         }
 
         //then we chekc whats left.
-        foreach (var item in itemList)
+        foreach (var item in raidList)
         {
             int index = GetChestNextFreeSlot();
 
@@ -413,11 +439,30 @@ public class PlayerInventory : MonoBehaviour, IInventory
         return -1;
     }
 
-    //i want to get the first item in hand that belong to a craftrecipe.
+    public bool HasItemInHand()
+    {
+        return handList.Count > 0;  
+    }
+
+    
+
+    
+
+
 
     #endregion
 
     #region RAID
+
+
+    public void StartRaidInventory()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            raidList.Add(new ItemClass(null, 0, i));
+
+        }
+    }
 
     public void AddRaidMoney(int value)
     {
@@ -430,39 +475,56 @@ public class PlayerInventory : MonoBehaviour, IInventory
 
     public void AddRaidItem(ItemClass item)
     {
-        List<ItemClass> stackableList = GetStackableList(item.data, raidList);
+
 
         int brakeFirst = 0;
 
-        while (item.quantity > 0)
+        //its taking too long to process.
+
+        for (int i = 0; i < raidList.Count; i++)
         {
-            brakeFirst++;
-            if (brakeFirst > 1000)
+            if (raidList[i].data == item.data)
             {
-                Debug.Log("break first");
-                break;
+                raidList[i].IncreaseQuantity(item.quantity);
+                return;
             }
 
-
-            if (stackableList.Count > 0)
+            if (raidList[i].data == null)
             {
-                StackItem(item, stackableList);
-                continue;
+                raidList[i].ReceiveNewData(item.data, item.quantity);
+                return;
             }
-
-            int freeSlot = GetChestNextFreeSlot();
-
-            if (freeSlot != -1)
-            {
-                CreateItem(freeSlot, item, stackableList);
-                continue;
-            }
-
-
         }
+       
 
-        Debug.Log("got to the end");
+       
+
         UIHolder.instance.raidInventory.UpdateUI(raidList);
+
+       
+
+
+        
+    }
+
+    void CreateRaidItem(int listIndex, ItemClass item, List<ItemClass> stackableList)
+    {
+        raidList[listIndex].ReceiveNewData(item.data);
+        item.DecreaseQuantity();
+        if (item.quantity > 0) stackableList.Add(raidList[listIndex]);
+    }
+
+    int GetRaidNextFreeSlot()
+    {
+
+        for (int i = 0; i < raidList.Count; i++)
+        {
+            if (raidList[i].data == null)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void RemoveItem()
@@ -500,7 +562,10 @@ public class PlayerInventory : MonoBehaviour, IInventory
     }
     public void IReceiveItem(ItemClass item)
     {
-        Debug.Log("receive item");
+
+
+        if (item == null) return;
+
         iinventoryComingList.RemoveAt(0);
         AddItemToHand(item);
     }

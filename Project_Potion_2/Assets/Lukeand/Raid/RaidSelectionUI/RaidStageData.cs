@@ -9,6 +9,7 @@ public class RaidStageData : ScriptableObject
     //gain diamond if you do it very well.
     public int stageID;
 
+    public float experienceForCompletion;
     public int moneyForCompletion;
     public int diamondForCompletion;
 
