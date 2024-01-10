@@ -26,11 +26,24 @@ public class RaidEndInventoryUnit : ButtonBase
 
     public void SetUp(ItemClass item, RaidInventoryType  raidInventoryType)
     {
+
+        if(item == null)
+        {
+            Debug.Log("this was the problem ");
+            return;
+        }
+
+        if (item.data == null)
+        {
+            Debug.Log("this was actually the problem ");
+            return;
+        }
+
         portrait.sprite = item.data.itemSprite;
-        nameText.text = item.data.name;
+        nameText.text = item.data.itemName;
         quantityText.text = item.quantity.ToString();
         this.raidInventoryType = raidInventoryType;
-        
+        ChangeColor();
     }
 
     void ChangeColor()
@@ -63,11 +76,13 @@ public class RaidEndInventoryUnit : ButtonBase
         if(raidInventoryType == RaidInventoryType.Can)
         {
             //then we remove this from the list and put it to seel
+            Debug.Log("Can");
         }
 
         if (raidInventoryType == RaidInventoryType.Sell)
         {
             //we check if there is space and we put in the inventory tab.
+            Debug.Log("sell");
         }
     }
 

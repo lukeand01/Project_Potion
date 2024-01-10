@@ -19,9 +19,15 @@ public class RaidHandler : MonoBehaviour
 
     //we give the information of waht has been chosen
 
+    //REF FROM PLAYER
     public RaidStageData currentStageData { get; private set; }
     public List<ChampClass> champList = new();
-    public List<ItemClass> chestList = new();  
+    public List<ItemClass> chestList = new();
+
+
+    //STOREEDE HERE
+    public List<ChampClass> changedChampList { get; private set; } = new();
+    public List<ItemClass> gainedItemList { get; private set; } = new();
 
 
     [Separator("DEBUGGING STUFF")]
@@ -169,10 +175,24 @@ public class RaidHandler : MonoBehaviour
         //this is callled to load back the other scene
         //
         //bnow we need to tell if we won or not.
-
+        GameHandler.instance.loader.LoadScene(0);
+    }
+    public void NextRaid()
+    {
+        GameHandler.instance.loader.LoadScene(currentStageData.stageID + 1);
     }
 
+    public void ReplayRaid()
+    {
+        GameHandler.instance.loader.LoadScene(currentStageData.stageID);
+    }
 
+    public void GiveDataFromRaidToPlayer()
+    {
+        //wee check what we have stored.
+    }
+
+    
 
 
     //you get a score for your pérformancec in teh raid

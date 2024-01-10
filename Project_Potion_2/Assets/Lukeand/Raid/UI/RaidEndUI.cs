@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class RaidEndUI : MonoBehaviour
 {
@@ -27,6 +28,7 @@ public class RaidEndUI : MonoBehaviour
 
 
     [Separator("CHAMP")]
+    [SerializeField] Transform champContainer;
     [SerializeField] RaidChampEndUnit champEndTemplate;
     [SerializeField] Transform[] champPos;
     List<RaidChampEndUnit> raidChampUnitList = new();
@@ -34,7 +36,7 @@ public class RaidEndUI : MonoBehaviour
     [Separator("INVENTORY")]
     [SerializeField] RaidEndInventoryUnit raidEndInventoryTemplate;
     [SerializeField] Transform inventoryContainer;
-
+    List<RaidEndInventoryUnit> raidInventoryList = new();
 
 
 
@@ -56,6 +58,7 @@ public class RaidEndUI : MonoBehaviour
 
     public void StartDefeat(List<ChampClass> copyChampList, float totalExperienceGained, RaidScoreType raidScore)
     {
+        Debug.Log("start defeat");
         ReadyScore(raidScore);
         ReadyEmptyInventoryList();
         ReadyChamps(totalExperienceGained);
@@ -65,25 +68,21 @@ public class RaidEndUI : MonoBehaviour
 
     public void StartVictory(List<ChampClass> copyChampList, float totalExperienceGained, RaidScoreType raidScore)
     {
-        Debug.Log("start victory");
-
-        //we set all those things but we make them invisible to show one by one.
 
 
         ReadyScore(raidScore);
         ReadyChamps(totalExperienceGained);
-        //GetRaidInventoryList();
+        ReadyRaidInventoryList();
 
         StartCoroutine(DisplayProcess());   
     }
 
-    List<RaidEndInventoryUnit> raidInventoryList = new();
+
 
 
     void ReadyScore(RaidScoreType raidScore)
     {    
         scoreModifier = (float)raidScore * 0.01f;
-        Debug.Log("the score modifier " + scoreModifier);
         scoreText.text = raidScore.ToString();
 
         scoreHolder.SetActive(false);
@@ -96,17 +95,22 @@ public class RaidEndUI : MonoBehaviour
 
     void ReadyRaidInventoryList()
     {
-        //here we get
+        //we need to get the inventroy of the items we found.
 
-        //we check this fella here to tell 
-        //this is jsut for show.
+        List<ItemClass> itemList = PCHandler.instance.inventory.raidList;
+        raidInventoryList.Clear();
 
-
-
-
-
-
-
+        foreach (var item in itemList)
+        {
+            if (item.data == null) continue;
+            RaidEndInventoryUnit newObject = Instantiate(raidEndInventoryTemplate, Vector2.zero, Quaternion.identity);
+            newObject.transform.parent = inventoryContainer;
+            newObject.SetUp(item, item.raidinventoryType);
+            newObject.Hide();
+            raidInventoryList.Add(newObject);
+        }
+       
+        //
     }
 
     void ReadyEmptyInventoryList()
@@ -117,9 +121,13 @@ public class RaidEndUI : MonoBehaviour
     void ReadyChamps(float totalExpGained)
     {
         //get the 
+
+
         PCHandler handler = PCHandler.instance;
         raidChampUnitList.Clear();
         RaidChampEndUnit newObject = Instantiate(champEndTemplate, Vector2.zero, Quaternion.identity);
+        newObject.transform.parent = champContainer;
+        newObject.transform.position = champPos[0].transform.position;
         newObject.SetUp(new ChampClass(handler.champ),  totalExpGained, scoreModifier ,  true);
         newObject.Hide();
         List<ChampClass> allyList = handler.GetAllies();
@@ -127,11 +135,13 @@ public class RaidEndUI : MonoBehaviour
         
         raidChampUnitList.Add(newObject);
 
+
+
         for (int i = 0; i < allyList.Count; i++)
         {
             RaidChampEndUnit secondObject = Instantiate(champEndTemplate, Vector2.zero, Quaternion.identity);
             secondObject.SetUp(allyList[i], totalExpGained / 3, scoreModifier,  false);
-            secondObject.transform.parent = transform;
+            newObject.transform.parent = champContainer;
             secondObject.transform.position = champPos[i + 1].transform.position;
             secondObject.Hide();
             raidChampUnitList.Add(secondObject);
@@ -146,9 +156,9 @@ public class RaidEndUI : MonoBehaviour
     IEnumerator DisplayProcess()
     {
         holder.SetActive(true); 
-       yield return StartCoroutine(ChampProcess());
        yield return StartCoroutine(ResultProcess());
-       yield return StartCoroutine(ItemsProcess());
+        yield return StartCoroutine(ChampProcess());
+        yield return StartCoroutine(ItemsProcess());
 
 
     }
@@ -186,42 +196,72 @@ public class RaidEndUI : MonoBehaviour
             yield return new WaitForSeconds(0.01f);
         }
 
- 
+
+
     }
     IEnumerator ChampProcess()
     {
-        Debug.Log("start champ");
+        //
 
-        //show each
+        for (int i = 0; i < raidChampUnitList.Count; i++)
+        {
+            raidChampUnitList[i].gameObject.SetActive(true);
+            raidChampUnitList[i].Show();
+            if (i == 0)
+            {
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+
+        yield return new WaitForSeconds(0.5f);
 
         foreach (var item in raidChampUnitList)
         {
-            item.gameObject.SetActive(true);
-            item.Show();            
-            yield return new WaitForSeconds(0.2f);
             item.ShowExperience();
-            yield return new WaitForSeconds(0.5f);
         }
 
-
-        yield return null;
     }
     IEnumerator ItemsProcess()
     {
-        yield return null;
+        foreach (var item in raidInventoryList)
+        {
+            item.gameObject.SetActive(true);            
+            item.Show();
+            yield return new WaitForSeconds(0.1f);
+        }
+
+
     }
 
-    public void Confirm()
+    public void ReturnBase()
     {
 
         //we some itens and give others.
 
         RaidHandler raid = GameHandler.instance.raid;
-        //raid.ReceiveNewItens();
         raid.EndRaid();
 
     }
     
+    public void ReplayCurrentStage()
+    {
+        //we receive everything but we start the raid.
+        RaidHandler raid = GameHandler.instance.raid;
+        raid.EndRaid();
+    }
+    public void PlayNextStage()
+    {
+        //we go to thee next if there is next.
+        RaidHandler raid = GameHandler.instance.raid;
+        raid.EndRaid();
+
+    }
+
+
+    //i just need to hold the itens somewhere.
+    //hold thee money gained.
+    //also hold thee champions?
+
 
 }
 

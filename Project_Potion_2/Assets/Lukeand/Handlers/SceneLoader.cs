@@ -95,6 +95,8 @@ public class SceneLoader : MonoBehaviour
         }
         else
         {
+            //then wee give everything stored in the raid
+            GameHandler.instance.raid.GiveDataFromRaidToPlayer();
             handler.playerHandler.gameObject.SetActive(true);
         }
         

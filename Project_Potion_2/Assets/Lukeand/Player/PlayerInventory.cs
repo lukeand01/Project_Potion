@@ -32,8 +32,9 @@ public class PlayerInventory : MonoBehaviour, IInventory
     public List<ItemClass> chestList { get; private set; } = new();
 
     [Separator("RAID")]
+    [HideInInspector] public List<ItemClass> raidList = new();
+    [SerializeField] List<ItemClass> initialRaidList = new();
     int raidMoney;
-    [SerializeField] public List<ItemClass> raidList = new();
 
     [Separator("SFX")]
     [SerializeField] ParticleSystem[] psArray;
@@ -461,6 +462,11 @@ public class PlayerInventory : MonoBehaviour, IInventory
         {
             raidList.Add(new ItemClass(null, 0, i));
 
+        }
+
+        foreach (var item in initialRaidList)
+        {
+            AddRaidItem(item);
         }
     }
 

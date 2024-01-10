@@ -18,7 +18,7 @@ public class ChampClass
 
     public int champLevel { get; private set; }//the current level
     public float champCurrentExperience { get; private set; } //the progress to the next level.
-    public float champTotalExperience { get; private set; } //the experience necessary for the current level
+    public float champRequiredExperience { get; private set; } //the experience necessary for the current level
     public int champStar { get; private set; } //the cap of the max level
     public int champCopies { get; private set; }
 
@@ -32,7 +32,7 @@ public class ChampClass
         champLevel = 1;
         champCopies = 1;
         champStar = 1;
-        champTotalExperience = Utils.GetRequiredExperience(champLevel);
+        champRequiredExperience = Utils.GetRequiredExperience(champLevel);
         GenerateAbilities();
         CreateStatList();
     }
@@ -44,7 +44,7 @@ public class ChampClass
         this.champStar = champStar;
 
         this.champCurrentExperience = champCurrentExperience;
-        champTotalExperience = Utils.GetRequiredExperience(champLevel);
+        champRequiredExperience = Utils.GetRequiredExperience(champLevel);
 
         GenerateAbilities();
         CreateStatList();
@@ -57,7 +57,7 @@ public class ChampClass
         champCopies = refClass.champCopies;
         champStar = refClass.champStar;
         champCurrentExperience = refClass.champCurrentExperience;
-        champTotalExperience = Utils.GetRequiredExperience(champLevel);
+        champRequiredExperience = Utils.GetRequiredExperience(champLevel);
     }
 
 
@@ -224,22 +224,27 @@ public class ChampClass
                 break;
             }
 
-            float experienceForNextLevel = champTotalExperience - champCurrentExperience;
+            float experienceForNextLevel = champRequiredExperience - champCurrentExperience;
             experienceForNextLevel = Mathf.Clamp(experienceForNextLevel, 0, value);
             currentValue -= experienceForNextLevel;
             champCurrentExperience += experienceForNextLevel;
 
-            if (champCurrentExperience >= champTotalExperience)
+            if (champCurrentExperience >= champRequiredExperience)
             {
                 champCurrentExperience = 0;
                 champLevel += 1;
-                champTotalExperience = Utils.GetRequiredExperience(champLevel);
+                champRequiredExperience = Utils.GetRequiredExperience(champLevel);
                 
             }
         }
 
 
 
+    }
+
+    public void GainExperienceForJustUI(float value)
+    {
+        champCurrentExperience += value;
     }
 
     public bool IsMaxLevel()
@@ -258,5 +263,7 @@ public class ChampClass
     }
 
     #endregion
+
+    
 }
 

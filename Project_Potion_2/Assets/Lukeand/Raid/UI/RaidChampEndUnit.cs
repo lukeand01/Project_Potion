@@ -1,7 +1,9 @@
 using DG.Tweening;
+using MyBox.EditorTools;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +15,9 @@ public class RaidChampEndUnit : MonoBehaviour
     [SerializeField] Image portrait;
     [SerializeField] TextMeshProUGUI nameText;
     [SerializeField] TextMeshProUGUI levelText;
-    [SerializeField] TextMeshProUGUI starText;
+    [SerializeField] Transform starContainer;
+    [SerializeField] Image starTemplate;
+
     [SerializeField] Image experienceBar;
     [SerializeField] TextMeshProUGUI experienceGainedText;
     [SerializeField] TextMeshProUGUI modifierText;
@@ -35,8 +39,8 @@ public class RaidChampEndUnit : MonoBehaviour
         {
             levelText.text = "LVL" + champ.champLevel.ToString();
         }
-        
-        starText.text = champ.champStar.ToString();
+
+        SpawnStars(champ.champStar);
         float currentExperience = champ.champCurrentExperience;
         float totalRequiredExperience = Utils.GetRequiredExperience(champ.champLevel);
 
@@ -52,6 +56,21 @@ public class RaidChampEndUnit : MonoBehaviour
 
     }
 
+    void SpawnStars(int quantity)
+    {
+        for (int i = 0; i < starContainer.childCount; i++)
+        {
+            Destroy(starContainer.GetChild(i).gameObject);
+        }
+
+        for (int i = 0; i < quantity; i++)
+        {
+            Image newObject = Instantiate(starTemplate, Vector3.zero, Quaternion.identity);
+            newObject.transform.parent = starContainer;
+            newObject.gameObject.SetActive(true);
+        }
+    }
+
     public void Hide()
     {
         transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
@@ -59,9 +78,14 @@ public class RaidChampEndUnit : MonoBehaviour
     }
     public void Show()
     {
-        //show just means it increases in size.
-        
-        transform.DOScale(1, 0.25f);
+        //show just means it increases in size.       
+        transform.DOScale(1.8f, 0.25f);
+
+    }
+
+    public void UpdatGainedExperienceText(float value)
+    {
+        experienceGainedText.text = value.ToString();
     }
 
     //
@@ -70,6 +94,8 @@ public class RaidChampEndUnit : MonoBehaviour
     {
         StartCoroutine(ShowExperienceProcess());
     }
+
+    //
 
     IEnumerator ShowExperienceProcess()
     {
@@ -80,35 +106,60 @@ public class RaidChampEndUnit : MonoBehaviour
 
         //float expForNextLevel = champ.exper
 
-        
-      
+
+       
         float remainingExperience = totalExperienceGained;
-        float singleLoopRemainingExp = 0;
+
+        float timeModifier = 0;
+
 
         float currentExp = champ.champCurrentExperience;
-        float totalExp = champ.champTotalExperience;
+        float requiredExp = champ.champRequiredExperience;
         int level = champ.champLevel;
 
-
+        
         while (remainingExperience > 0 && !champ.IsMaxLevel())
         {
             //we keep on giving.
             //till we either done or out ofresources.
 
 
+            currentExp += 1;
+            remainingExperience -= 1;
 
-            yield return new WaitForSeconds(0.01f);
+            experienceBar.fillAmount = currentExp / requiredExp;
+
+
+            if(currentExp >= requiredExp)
+            {            
+                currentExp = 0;
+                level += 1;
+                yield return StartCoroutine(IncreaseLevelProcess(level));
+                totalExperienceGained = Utils.GetRequiredExperience(level);
+                experienceBar.fillAmount = currentExp / requiredExp;
+            }
+            
+
+
+            yield return new WaitForSeconds(0.008f);
         }
 
 
-        
 
     }
 
     IEnumerator IncreaseLevelProcess(int newLevel)
     {
+
         //increase 
-        levelText.text = newLevel.ToString();
+        if (champ.IsMaxLevel())
+        {
+            levelText.text = "LVL MAX";
+        }
+        else
+        {
+            levelText.text = "LVL" + newLevel.ToString();
+        }
         levelText.transform.localScale = Vector3.one;
 
         while(levelText.transform.localScale.x < 1.5f)
@@ -123,7 +174,6 @@ public class RaidChampEndUnit : MonoBehaviour
             yield return new WaitForSeconds(0.005f);
         }
 
-        yield return null;
     }
 
 
